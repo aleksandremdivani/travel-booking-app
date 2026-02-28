@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+
+.nav-item a::after {
+  content: "";
+  width: 0;
+  bottom: -3px;
+  left: 0;
+  background-color: black;
+  position: absolute;
+  height: 2px;
+  transition: width 0.4s ease-in-out;
+}
+.nav-item a:hover::after {
+  width: 100%;
+}
+.nav-item a{
+  position: relative;
+  width: 33%;
+}
