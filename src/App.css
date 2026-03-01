@@ -16,5 +16,11 @@
 }
 .nav-item a{
   position: relative;
-  width: 33%;
+}
+
+main{
+  background-image: url("/assets/main-image.avif");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }

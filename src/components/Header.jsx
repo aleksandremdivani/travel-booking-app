@@ -1,39 +1,42 @@
 import { Link } from "react-router-dom";
-import '../App.css';
+import "../App.css";
+import { Sun } from "lucide-react";
 
 const Header = () => {
   return (
-    <header className="p-4 flex items-center justify-between">
+    <header className="px-4 h-20 flex items-center justify-between">
       <div className="flex items-center gap-x-2">
         <a href="https://geolab.edu.ge/" target="_blank">
           <img
             src="/assets/geolab-logo-blue.png"
-            className="w-11 h-14"
+            className="w-10 h-auto"
             alt="logo"
           />
         </a>
         <h2 className="font-mono font-bold">Traveloop Bookings</h2>
       </div>
-      <nav>
-        <ul className="flex items-center gap-x-6">
-          <li className="nav-item">
-            <a href="#">
-            Destinations
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#">
-            My Bookings
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#">
-            Weather
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <button className="cursor-pointer border w-30 h-10 rounded-lg text-white bg-blue-600">Book Now</button>
+      <div className="flex items-center gap-6">
+        <nav>
+          <ul className="flex items-center gap-8">
+             <li className="nav-item">
+              <Link to="/">Home</Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/">Destinations</Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/">My Bookings</Link>
+            </li>
+            <li className="nav-item flex gap-1 items-center">
+              <Sun size={18} className="text-yellow-500" />
+              <Link to="/">Weather</Link>
+            </li>
+          </ul>
+        </nav>
+        <button className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">
+          Book Now
+        </button>
+      </div>
     </header>
   );
 };
