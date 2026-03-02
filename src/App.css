@@ -24,3 +24,7 @@ main{
   background-repeat: no-repeat;
   background-position: center;
 }
+ 
+h1 {
+  line-height: 50px;
+}

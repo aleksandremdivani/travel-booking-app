@@ -6,8 +6,10 @@ const HomePage = () => {
     <>
       <Header />
       <main className="h-140 border justify-center flex items-center">
-        <div className="h-80 max-w-[800px] w-full flex flex-col items-start justify-start gap-3">
-          <h1 className="text-white font-bold text-[50px]">Plan Your Perfect Trip!</h1>
+        <div className="h-100 max-w-80/100 w-full flex flex-col items-start justify-start gap-3">
+          <h1 className="text-white font-bold text-[50px] line-[0px]">
+            Plan Your Perfect Trip!
+          </h1>
           <p className="text-white font-semibold text-[20px]">
             Find and book amazing travel deals easily
           </p>
