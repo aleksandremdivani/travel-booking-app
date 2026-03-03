@@ -1,10 +1,10 @@
 import "../App.css";
 import { useContext } from "react";
 import { DestinationsContext } from "../context/DestinationsContext";
-import EmblaCarousel from "../carousel/EmblaCarousel";
 
 const HomePage = () => {
   const { destinations } = useContext(DestinationsContext);
+
   return (
     <>
       <main className="h-140 border justify-center flex items-center">
@@ -22,7 +22,16 @@ const HomePage = () => {
       </main>
       <section className="p-3">
         <h2 className="text-[30px]">Top Destinations</h2>
-        <EmblaCarousel destinations={destinations} />
+        <ul>
+          {destinations.map((item) => {
+            return (
+              <li className="border" key={item.id}>
+                <h3>{item.name}</h3>
+                
+              </li>
+            );
+          })}
+        </ul>
       </section>
     </>
   );
