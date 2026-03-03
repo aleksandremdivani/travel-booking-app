@@ -9,7 +9,7 @@ const Header = () => {
         <a href="https://geolab.edu.ge/" target="_blank">
           <img
             src="/assets/geolab-logo-blue.png"
-            className="w-10 h-auto"
+            className="w-10 h-auto hover:scale-112 transition-transform ease-in 0.3s"
             alt="logo"
           />
         </a>
@@ -18,18 +18,21 @@ const Header = () => {
       <div className="flex items-center gap-6">
         <nav>
           <ul className="flex items-center gap-8">
-             <li className="nav-item">
+            <li className="nav-item">
               <Link to="/">Home</Link>
             </li>
             <li className="nav-item">
-              <Link to="/">Destinations</Link>
+              <Link to="/destinations">Destinations</Link>
             </li>
             <li className="nav-item">
-              <Link to="/">My Bookings</Link>
+              <Link to="/hotels">Hotels</Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/bookings">My Bookings</Link>
             </li>
             <li className="nav-item flex gap-1 items-center">
               <Sun size={18} className="text-yellow-500" />
-              <Link to="/">Weather</Link>
+              <Link to="/weather">Weather</Link>
             </li>
           </ul>
         </nav>

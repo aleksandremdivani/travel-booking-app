@@ -9,7 +9,7 @@
   background-color: black;
   position: absolute;
   height: 2px;
-  transition: width 0.4s ease-in-out;
+  transition: width 0.3s ease-in-out;
 }
 .nav-item a:hover::after {
   width: 100%;

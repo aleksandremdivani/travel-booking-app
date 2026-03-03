@@ -1,10 +1,12 @@
-import Header from "../components/Header";
 import "../App.css";
+import { useContext } from "react";
+import { DestinationsContext } from "../context/DestinationsContext";
+import EmblaCarousel from "../carousel/EmblaCarousel";
 
 const HomePage = () => {
+  const { destinations } = useContext(DestinationsContext);
   return (
     <>
-      <Header />
       <main className="h-140 border justify-center flex items-center">
         <div className="h-100 max-w-80/100 w-full flex flex-col items-start justify-start gap-3">
           <h1 className="text-white font-bold text-[50px] line-[0px]">
@@ -18,6 +20,10 @@ const HomePage = () => {
           </button>
         </div>
       </main>
+      <section className="p-3">
+        <h2 className="text-[30px]">Top Destinations</h2>
+        <EmblaCarousel destinations={destinations} />
+      </section>
     </>
   );
 };
