@@ -18,7 +18,7 @@
   position: relative;
 }
 
-main{
+.home-main{
   background-image: url("/assets/main-image.avif");
   background-size: cover;
   background-repeat: no-repeat;

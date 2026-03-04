@@ -3,19 +3,17 @@ import HomePage from "./pages/HomePage";
 import axios from "axios";
 import { Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
+import { HotelsPage } from "./pages/HotelsPage";
 
 function App() {
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get("");
-    };
-  }, []);
+  
 
   return (
     <>
       <Header />
       <Routes>
-        <Route element={<HomePage/>} path="/"/>
+        <Route element={<HomePage />} path="/" />
+        <Route element={<HotelsPage/>} path="/hotels"/>
       </Routes>
     </>
   );
