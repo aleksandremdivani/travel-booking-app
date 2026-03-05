@@ -28,3 +28,7 @@
 h1 {
   line-height: 50px;
 }
+
+.weather-main {
+  background-image: linear-gradient(rgba(30, 30, 30, 0.67))
+}

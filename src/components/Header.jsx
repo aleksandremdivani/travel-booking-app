@@ -1,10 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../App.css";
-import { Sun } from "lucide-react";
+import { NavItem } from "./NavItem";
 
 const Header = () => {
+  const location = useLocation();
+
+  const isTransparent = location.pathname === "/weather";
   return (
-    <header className="px-4 h-20 flex items-center justify-between">
+    <header
+      className={`px-4 h-20 flex items-center justify-between w-full
+  ${isTransparent ? "absolute" : "bg-white"}`}
+    >
       <div className="flex items-center gap-x-2">
         <a href="https://geolab.edu.ge/" target="_blank">
           <img
@@ -13,27 +19,37 @@ const Header = () => {
             alt="logo"
           />
         </a>
-        <h2 className="font-mono font-bold">Traveloop Bookings</h2>
+        <h2
+          className={`font-mono font-bold
+          ${isTransparent ? "text-white" : "text-black"}`}
+        >
+          Traveloop Bookings
+        </h2>
       </div>
       <div className="flex items-center gap-6">
         <nav>
           <ul className="flex items-center gap-8">
-            <li className="nav-item">
-              <Link to="/">Home</Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/destinations">Destinations</Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/hotels">Hotels</Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/bookings">My Bookings</Link>
-            </li>
-            <li className="nav-item flex gap-1 items-center">
-              <Sun size={18} className="text-yellow-500" />
-              <Link to="/weather">Weather</Link>
-            </li>
+            <NavItem link={"/"} label={"Home"} isTransparent={isTransparent} />
+            <NavItem
+              link={"/destinations"}
+              label={"Destinations"}
+              isTransparent={isTransparent}
+            />
+            <NavItem
+              link={"/hotels"}
+              label={"Hotels"}
+              isTransparent={isTransparent}
+            />
+            <NavItem
+              link={"/bookings"}
+              label={"My Bookings"}
+              isTransparent={isTransparent}
+            />
+            <NavItem
+              link={"/weather"}
+              label={"Weather"}
+              isTransparent={isTransparent}
+            />
           </ul>
         </nav>
         <button className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">

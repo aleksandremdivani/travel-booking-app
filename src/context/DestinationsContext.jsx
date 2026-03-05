@@ -1,16 +1,18 @@
 import axios from "axios";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 
 const DestinationsContext = createContext();
 
 const DestinationsProvider = ({ children }) => {
-  const [currentCity, setCurrentCity] = useState("");
-  const [weather, setWeather] = useState([]);
+  const [currentCity, setCurrentCity] = useState("tbilisi");
+  const [weather, setWeather] = useState(null);
+  const inputRef = useRef();
   useEffect(() => {
    const fetchWeatherData = async (city) => {
       const { VITE_WEATHER_API_KEY } = import.meta.env;
       console.log(VITE_WEATHER_API_KEY);
       try {
+        if(!city) return;
         const response = await axios.get(
           "https://api.openweathermap.org/data/2.5/weather",
           {
@@ -22,12 +24,17 @@ const DestinationsProvider = ({ children }) => {
           },
         );
         setWeather(response.data);
+        console.log(response.data);
       } catch (error) {
         console.log(error);
       }
     };
     fetchWeatherData(currentCity);
   }, [currentCity]);
+  const handleSearch = () => {
+    setCurrentCity(inputRef.current.value.trim());
+    inputRef.current.value = "";
+  };
   const destinations = [
     {
       id: "paris",
@@ -70,6 +77,11 @@ const DestinationsProvider = ({ children }) => {
     <DestinationsContext.Provider
       value={{
         destinations,
+        weather,
+        setCurrentCity,
+        setWeather,
+        handleSearch,
+        inputRef,
       }}
     >
       {children}
