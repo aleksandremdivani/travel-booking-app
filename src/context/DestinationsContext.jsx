@@ -4,15 +4,38 @@ import { createContext, useEffect, useRef, useState } from "react";
 const DestinationsContext = createContext();
 
 const DestinationsProvider = ({ children }) => {
-  const [currentCity, setCurrentCity] = useState("tbilisi");
+  const [currentCity, setCurrentCity] = useState("");
   const [weather, setWeather] = useState(null);
   const inputRef = useRef();
   useEffect(() => {
-   const fetchWeatherData = async (city) => {
+    const { VITE_HOTELS_API_KEY } = import.meta.env;
+    const fetchHotelsList = async (city) => {
+      try {
+        const response = await axios.get(
+          "https://booking-com-api4.p.rapidapi.com/api/core/list-hotels",
+          {
+            params: {
+              city_name: city,
+            },
+            headers: {
+              "x-rapidapi-host": "booking-com-api4.p.rapidapi.com",
+              "x-rapidapi-key": VITE_HOTELS_API_KEY,
+            },
+          },
+        );
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchHotelsList("paris");
+  }, [currentCity]);
+  useEffect(() => {
+    const fetchWeatherData = async (city) => {
       const { VITE_WEATHER_API_KEY } = import.meta.env;
       console.log(VITE_WEATHER_API_KEY);
       try {
-        if(!city) return;
+        if (!city) return;
         const response = await axios.get(
           "https://api.openweathermap.org/data/2.5/weather",
           {

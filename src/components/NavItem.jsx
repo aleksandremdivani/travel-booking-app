@@ -6,7 +6,7 @@ export const NavItem = ({ label, isTransparent, link }) => {
   const isActive = location.pathname === link;
   return (
     <li className="nav-item flex">
-      {label === "Weather" ? <Sun className="mr-1 text-yellow-500" /> : ""}
+      {label === "Weather" && <Sun className="mr-1 text-yellow-500" /> }
       <Link
         to={link}
         className={`flex ${
