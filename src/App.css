@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 .nav-item a::after {
   content: "";
   width: 0;
@@ -14,21 +13,26 @@
 .nav-item a:hover::after {
   width: 100%;
 }
-.nav-item a{
+.nav-item a {
   position: relative;
 }
 
-.home-main{
+.home-main {
   background-image: url("/assets/main-image.avif");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
 }
- 
+
 h1 {
   line-height: 50px;
 }
 
 .weather-main {
-  background-image: linear-gradient(rgba(30, 30, 30, 0.67))
+  background-image: linear-gradient(rgba(30, 30, 30, 0.67));
 }
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+

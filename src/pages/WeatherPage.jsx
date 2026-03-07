@@ -10,7 +10,7 @@ export const WeatherPage = () => {
     <main
       className="h-dvh flex flex-col justify-center weather-main"
       style={{
-        backgroundImage: `url(/assets/main-image.avif)`,
+        backgroundImage: `url(/assets/weather-img.jpg)`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -20,7 +20,7 @@ export const WeatherPage = () => {
         <div className="w-50/100 flex gap-4">
           <input
             className="text-black p-4 flex-1 rounded-md bg-white outline-none"
-            type="text"
+            type="search"
             placeholder="Search for a city..."
             ref={inputRef}
           />
@@ -52,7 +52,7 @@ export const WeatherPage = () => {
                   }}
                 >
                   {/* <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-transparent rounded-2xl"></div> */}
-                  <div className="absolute inset-0 bg-black/40 rounded-2xl"></div>
+                  {/* <div className="absolute inset-0 bg-black/40 rounded-2xl"></div> */}
 
                   <div className="md:w-4/10 w-5/10 bg-white/30 backdrop-blur-sm rounded-2xl shadow-2xl p-6 h-full flex flex-col gap-3">
                     <h2 className="text-[40px] font-bold text-white">

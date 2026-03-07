@@ -31,11 +31,6 @@ const Header = () => {
           <ul className="flex items-center gap-8">
             <NavItem link={"/"} label={"Home"} isTransparent={isTransparent} />
             <NavItem
-              link={"/destinations"}
-              label={"Destinations"}
-              isTransparent={isTransparent}
-            />
-            <NavItem
               link={"/hotels"}
               label={"Hotels"}
               isTransparent={isTransparent}

@@ -7,33 +7,78 @@ const DestinationsProvider = ({ children }) => {
   const [currentCity, setCurrentCity] = useState("");
   const [weather, setWeather] = useState(null);
   const inputRef = useRef();
+  const getAccessToken = async () => {
+    try {
+      const response = await axios.post(
+        "https://test.api.amadeus.com/v1/security/oauth2/token",
+        `grant_type=client_credentials&client_id=${import.meta.env.VITE_AMADEUS_API_KEY}&client_secret=${import.meta.env.VITE_AMADEUS_API_SECRET}`,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+
+      console.log("TOKEN:", response.data);
+
+      return response.data.access_token;
+    } catch (error) {
+      console.log(error.response?.data);
+    }
+  };
+  const searchCity = async (city) => {
+    const token = await getAccessToken();
+
+    const response = await axios.get(
+      "https://test.api.amadeus.com/v1/reference-data/locations",
+      {
+        params: {
+          keyword: city,
+          subType: "CITY",
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    console.log(response.data);
+
+    return response.data.data[0].iataCode;
+  };
+
+  //hotels
   useEffect(() => {
-    const { VITE_HOTELS_API_KEY } = import.meta.env;
     const fetchHotelsList = async (city) => {
+      console.log(import.meta.env.VITE_AMADEUS_API_KEY);
+      console.log(import.meta.env.VITE_AMADEUS_API_SECRET);
       try {
+        if (!city) return;
+        const token = await getAccessToken();
+        const cityCode = await searchCity(city);
         const response = await axios.get(
-          "https://booking-com-api4.p.rapidapi.com/api/core/list-hotels",
+          "https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city",
           {
             params: {
-              city_name: city,
+              cityCode: cityCode,
             },
             headers: {
-              "x-rapidapi-host": "booking-com-api4.p.rapidapi.com",
-              "x-rapidapi-key": VITE_HOTELS_API_KEY,
+              Authorization: `Bearer ${token}`,
             },
           },
         );
+
         console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     };
-    fetchHotelsList("paris");
+    fetchHotelsList(currentCity);
   }, [currentCity]);
+  //https://test.api.amadeus.com/v3/shopping/hotel-offers
+
+  //weather
   useEffect(() => {
     const fetchWeatherData = async (city) => {
       const { VITE_WEATHER_API_KEY } = import.meta.env;
-      console.log(VITE_WEATHER_API_KEY);
       try {
         if (!city) return;
         const response = await axios.get(
