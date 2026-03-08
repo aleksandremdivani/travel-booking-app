@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { DestinationsContext } from "../context/DestinationsContext";
 
 const DateRangePicker = () => {
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, endDate] = dateRange;
+  const {startDate, endDate, setDateRange} = useContext(DestinationsContext);
 
   return (
     <DatePicker

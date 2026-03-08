@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Currency } from "lucide-react";
 import { createContext, useEffect, useRef, useState } from "react";
 
 const DestinationsContext = createContext();
@@ -8,6 +9,8 @@ const DestinationsProvider = ({ children }) => {
   //weather
   const [weather, setWeather] = useState(null);
   //hotels
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [startDate, endDate] = dateRange;
   const [hotelsList, SetHotelsList] = useState([]);
   const inputRef = useRef();
   const getAccessToken = async () => {
@@ -70,23 +73,47 @@ const DestinationsProvider = ({ children }) => {
           },
         );
 
-        console.log(response.data);
-        SetHotelsList(response.data.data.data);
-        console.log(hotelsList);
+        console.log(response);
+        SetHotelsList(response.data.data);
       } catch (error) {}
     };
     fetchHotelsList(currentCity);
   }, [currentCity]);
   //https://test.api.amadeus.com/v3/shopping/hotel-offers
   useEffect(() => {
-    const fetchHotelDetails = async() => {
-      try {
-        const response = await axios.get("https://test.api.amadeus.com/v3/shopping/hotel-offers")
-      } catch (error) {
-        
-      }
+  const fetchHotelDetails = async () => {
+    try {
+      if (!hotelsList.length) return;
+
+      const token = await getAccessToken();
+
+      const hotelIds = hotelsList
+        .slice(0, 50)
+        .map((item) => item.hotelId)
+        .join(",");
+
+      const response = await axios.get(
+        "https://test.api.amadeus.com/v3/shopping/hotel-offers",
+        {
+          params: {
+            hotelIds: hotelIds,
+            // checkInDate: startDate,
+            // checkOutDate: endDate,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
     }
-  },[])
+  };
+
+  fetchHotelDetails();
+}, [hotelsList]);
 
   //weather
   useEffect(() => {
@@ -163,6 +190,11 @@ const DestinationsProvider = ({ children }) => {
         setWeather,
         handleSearch,
         inputRef,
+        dateRange,
+        startDate,
+        setDateRange,
+        endDate,
+        hotelsList,
       }}
     >
       {children}
