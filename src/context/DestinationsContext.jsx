@@ -5,7 +5,10 @@ const DestinationsContext = createContext();
 
 const DestinationsProvider = ({ children }) => {
   const [currentCity, setCurrentCity] = useState("");
+  //weather
   const [weather, setWeather] = useState(null);
+  //hotels
+  const [hotelsList, SetHotelsList] = useState([]);
   const inputRef = useRef();
   const getAccessToken = async () => {
     try {
@@ -30,11 +33,10 @@ const DestinationsProvider = ({ children }) => {
     const token = await getAccessToken();
 
     const response = await axios.get(
-      "https://test.api.amadeus.com/v1/reference-data/locations",
+      "https://test.api.amadeus.com/v1/reference-data/locations/cities",
       {
         params: {
           keyword: city,
-          subType: "CITY",
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -68,12 +70,23 @@ const DestinationsProvider = ({ children }) => {
           },
         );
 
-        console.log(response);
+        console.log(response.data);
+        SetHotelsList(response.data.data.data);
+        console.log(hotelsList);
       } catch (error) {}
     };
     fetchHotelsList(currentCity);
   }, [currentCity]);
   //https://test.api.amadeus.com/v3/shopping/hotel-offers
+  useEffect(() => {
+    const fetchHotelDetails = async() => {
+      try {
+        const response = await axios.get("https://test.api.amadeus.com/v3/shopping/hotel-offers")
+      } catch (error) {
+        
+      }
+    }
+  },[])
 
   //weather
   useEffect(() => {
