@@ -23,7 +23,7 @@ const HomePage = () => {
             <input
               type="search"
               placeholder="Choose destination"
-              className="w-4/10 h-12 px-4 border border-gray-300 rounded-xl shadow-sm
+              className="dest-search w-4/10 h-12 px-11 border border-gray-300 rounded-xl shadow-sm
         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
         hover:border-gray-400 transition text-gray-700 bg-white"
             />
@@ -59,7 +59,7 @@ const HomePage = () => {
                     <p>From {item.price}$</p>
                     <div className="flex justify-end items-end">
                       <button className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">
-                        See more
+                        Book Now
                       </button>
                     </div>
                   </div>

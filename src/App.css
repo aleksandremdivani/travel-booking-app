@@ -36,3 +36,9 @@ h1 {
   width: 100%;
 }
 
+.dest-search {
+  background-image: url("/assets/location-pin.svg");
+  background-repeat: no-repeat;
+  background-position: center left 6px;
+  background-size: 35px;
+}

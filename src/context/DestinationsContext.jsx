@@ -5,14 +5,20 @@ import { createContext, useEffect, useRef, useState } from "react";
 const DestinationsContext = createContext();
 
 const DestinationsProvider = ({ children }) => {
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [startDate, endDate] = dateRange;
+  const inputRef = useRef();
+  const [isLoading, setIsLoading] = useState(true);
+  //`https://source.unsplash.com/600x400/?${hotel.name},hotel`;
+
   const [currentCity, setCurrentCity] = useState("");
   //weather
   const [weather, setWeather] = useState(null);
   //hotels
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, endDate] = dateRange;
+
   const [hotelsList, SetHotelsList] = useState([]);
-  const inputRef = useRef();
+  const [hotelOffers, setHotelOffers] = useState([]);
+  const [hotelRatings, setHotelRatings] = useState([]);
   const getAccessToken = async () => {
     try {
       const response = await axios.post(
@@ -53,6 +59,7 @@ const DestinationsProvider = ({ children }) => {
   };
 
   //hotels
+  //https://maps.googleapis.com/maps/api/place/textsearch/json?query=Hotel+Name+City+Name&key=YOUR_API_KEY
   useEffect(() => {
     const fetchHotelsList = async (city) => {
       console.log(import.meta.env.VITE_AMADEUS_API_KEY);
@@ -73,48 +80,84 @@ const DestinationsProvider = ({ children }) => {
           },
         );
 
-        console.log(response);
+        console.log(response.data);
         SetHotelsList(response.data.data);
       } catch (error) {}
     };
     fetchHotelsList(currentCity);
   }, [currentCity]);
-  //https://test.api.amadeus.com/v3/shopping/hotel-offers
-  useEffect(() => {
-  const fetchHotelDetails = async () => {
-    try {
-      if (!hotelsList.length) return;
 
+  useEffect(() => {
+    const fetchHotelOffers = async () => {
+      const formatDate = (date) => {
+        return date ? date.toISOString().split("T")[0] : null;
+      };
+      try {
+        if (!hotelsList.length) return;
+
+        const token = await getAccessToken();
+
+        const hotelIds = hotelsList
+          .slice(0, 50)
+          .map((item) => item.hotelId)
+          .join(",");
+
+        const response = await axios.get(
+          "https://test.api.amadeus.com/v3/shopping/hotel-offers",
+          {
+            params: {
+              hotelIds: hotelIds,
+              checkInDate: formatDate(startDate),
+              checkOutDate: formatDate(endDate),
+              includeClosed: false,
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        console.log(response.data);
+        setHotelOffers(response.data.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHotelOffers();
+  }, [hotelsList, startDate, endDate]);
+  useEffect(() => {
+    const getHotelReviews = async () => {
       const token = await getAccessToken();
 
-      const hotelIds = hotelsList
-        .slice(0, 50)
-        .map((item) => item.hotelId)
-        .join(",");
-
-      const response = await axios.get(
-        "https://test.api.amadeus.com/v3/shopping/hotel-offers",
-        {
-          params: {
-            hotelIds: hotelIds,
-            // checkInDate: startDate,
-            // checkOutDate: endDate,
+      // const hotelIds = hotelOffers.map((item) => item.hotel.hotelId).join(",");
+      try {
+        const response = await axios.get(
+          "https://test.api.amadeus.com/v2/e-reputation/hotel-sentiments",
+          {
+            params: {
+              hotelIds: "BWPAR160",
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
+        );
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getHotelReviews();
+  }, [hotelOffers]);
+  const handleBookingSearch = () => {
+    setCurrentCity(inputRef.current.value.trim());
+    inputRef.current.value = "";
+    setIsLoading(true);
+    setDateRange([null, null]);
   };
-
-  fetchHotelDetails();
-}, [hotelsList]);
-
   //weather
   useEffect(() => {
     const fetchWeatherData = async (city) => {
@@ -195,6 +238,11 @@ const DestinationsProvider = ({ children }) => {
         setDateRange,
         endDate,
         hotelsList,
+        hotelOffers,
+        setHotelOffers,
+        handleBookingSearch,
+        isLoading,
+        currentCity,
       }}
     >
       {children}

@@ -4,14 +4,15 @@ import "react-datepicker/dist/react-datepicker.css";
 import { DestinationsContext } from "../context/DestinationsContext";
 
 const DateRangePicker = () => {
-  const {startDate, endDate, setDateRange} = useContext(DestinationsContext);
-
+  const { startDate, endDate, setDateRange } = useContext(DestinationsContext);
+  
   return (
     <DatePicker
       selectsRange
       startDate={startDate}
       endDate={endDate}
       onChange={(update) => setDateRange(update)}
+      dateFormat="yyyy-MM-dd"
       isClearable
       minDate={Date()}
       placeholderText="Check in - Check out"
