@@ -14,7 +14,7 @@ export const HotelsPage = () => {
   } = useContext(DestinationsContext);
   return (
     <main className="flex flex-col h-180 gap-3">
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center bg-gray-200">
         <div className="gap-3 rounded-xl w-full max-w-95/100 h-20 justify-center flex flex items-center">
           <input
             type="search"
@@ -36,22 +36,26 @@ export const HotelsPage = () => {
           </button>
         </div>
       </div>
-      <div className="h-auto border-green-500 border w-full flex justify-center gap-3">
-        <div className=" flex flex-col gap-3 w-95/100">
-          {hotelOffers && !isLoading && currentCity && (
-            <div>
-              <p>
-                Showing {hotelOffers.length} available hotels in {currentCity}
-              </p>
-            </div>
-          )}
-          {isLoading && <Loader />}
+      <div className="h-auto w-full flex items-center flex-col gap-6 ">
+        {hotelOffers && !isLoading && currentCity && (
+          <div className="border-b w-full p-4">
+            <p>
+              Showing {hotelOffers.length} available hotels in {currentCity}
+            </p>
+          </div>
+        )}
+        <div className="flex flex-col gap-6 w-95/100 ">
+          {isLoading && <Loader size={40} />}
           {hotelOffers &&
+          currentCity &&
             !isLoading &&
             hotelOffers.map((item) => (
-              <div key={item.hotel.hotelId} className="border flex h-[200px]">
+              <div
+                key={item.hotel.hotelId}
+                className="rounded-xl shadow-xl flex h-[200px] border border-gray-300"
+              >
                 <div
-                  className="h-full w-33/100"
+                  className="h-full w-33/100 rounded-s-xl"
                   style={{
                     backgroundImage: `url(https://picsum.photos/seed/${item.hotel.hotelId}/600/400)`,
                     backgroundPosition: "center",
@@ -59,22 +63,32 @@ export const HotelsPage = () => {
                     backgroundSize: "cover",
                   }}
                 ></div>
-                <div className="pt-3 ps-5">
+                <div className="pt-3 ps-5 w-75/100 flex flex-col justify-between">
                   <h2 className="font-bold text-[18px]">{item.hotel.name}</h2>
-                  <p>
-                    📍 {currentCity.toUpperCase()}, {weather.sys.country}
-                  </p>
-                  <p>
-                    {item.offers[0].checkInDate}-{item.offers[0].checkOutDate}
-                  </p>
-                  <p>
-                    From
-                    <span className="text-[18px] font-bold ms-2">{item.offers[0].price.base} {item.offers[0].price.currency} </span>
-                    /Night
-                  </p>
-                  <button className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">
-                    Book Now
-                  </button>
+                  <div>
+                    <p>
+                      📍 {currentCity.toUpperCase()}, {weather.sys.country}
+                    </p>
+                    <p>
+                      {item.offers[0].checkInDate}-{item.offers[0].checkOutDate}
+                    </p>
+                  </div>
+                  <div className="flex justify-between w-full items-center pe-4 pb-5">
+                    <p>
+                      From
+                      <span className="text-[18px] font-bold ms-2">
+                        {item.offers[0].price.base
+                          ? item.offers[0].price.base
+                          : Math.round(item.offers[0].price.total)}
+
+                        {item.offers[0].price.currency}
+                      </span>
+                      /Night
+                    </p>
+                    <button className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">
+                      Book Now
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

@@ -1,11 +1,11 @@
 import axios from "axios";
-import { Currency } from "lucide-react";
 import { createContext, useEffect, useRef, useState } from "react";
 
 const DestinationsContext = createContext();
 
 const DestinationsProvider = ({ children }) => {
   const [dateRange, setDateRange] = useState([null, null]);
+  const [accessToken, setAccessToken] = useState(null);
   const [startDate, endDate] = dateRange;
   const inputRef = useRef();
   const [isLoading, setIsLoading] = useState(true);
@@ -19,28 +19,28 @@ const DestinationsProvider = ({ children }) => {
   const [hotelsList, SetHotelsList] = useState([]);
   const [hotelOffers, setHotelOffers] = useState([]);
   const [hotelRatings, setHotelRatings] = useState([]);
-  const getAccessToken = async () => {
-    try {
-      const response = await axios.post(
-        "https://test.api.amadeus.com/v1/security/oauth2/token",
-        `grant_type=client_credentials&client_id=${import.meta.env.VITE_AMADEUS_API_KEY}&client_secret=${import.meta.env.VITE_AMADEUS_API_SECRET}`,
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+
+  useEffect(() => {
+    const getAccessToken = async () => {
+      try {
+        const response = await axios.post(
+          "https://test.api.amadeus.com/v1/security/oauth2/token",
+          `grant_type=client_credentials&client_id=${import.meta.env.VITE_AMADEUS_API_KEY}&client_secret=${import.meta.env.VITE_AMADEUS_API_SECRET}`,
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
           },
-        },
-      );
+        );
 
-      console.log("TOKEN:", response.data);
-
-      return response.data.access_token;
-    } catch (error) {
-      console.log(error.response?.data);
-    }
-  };
+        setAccessToken(response.data.access_token);
+      } catch (error) {
+        console.log(error.response?.data);
+      }
+    };
+    getAccessToken();
+  }, []);
   const searchCity = async (city) => {
-    const token = await getAccessToken();
-
     const response = await axios.get(
       "https://test.api.amadeus.com/v1/reference-data/locations/cities",
       {
@@ -48,7 +48,7 @@ const DestinationsProvider = ({ children }) => {
           keyword: city,
         },
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       },
     );
@@ -66,7 +66,6 @@ const DestinationsProvider = ({ children }) => {
       console.log(import.meta.env.VITE_AMADEUS_API_SECRET);
       try {
         if (!city) return;
-        const token = await getAccessToken();
         const cityCode = await searchCity(city);
         const response = await axios.get(
           "https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city",
@@ -75,12 +74,13 @@ const DestinationsProvider = ({ children }) => {
               cityCode: cityCode,
             },
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           },
         );
 
         console.log(response.data);
+
         SetHotelsList(response.data.data);
       } catch (error) {}
     };
@@ -90,12 +90,17 @@ const DestinationsProvider = ({ children }) => {
   useEffect(() => {
     const fetchHotelOffers = async () => {
       const formatDate = (date) => {
-        return date ? date.toISOString().split("T")[0] : null;
+        if (!date) return null;
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
       };
+
       try {
         if (!hotelsList.length) return;
-
-        const token = await getAccessToken();
 
         const hotelIds = hotelsList
           .slice(0, 50)
@@ -110,9 +115,10 @@ const DestinationsProvider = ({ children }) => {
               checkInDate: formatDate(startDate),
               checkOutDate: formatDate(endDate),
               includeClosed: false,
+              currency: "USD",
             },
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           },
         );
@@ -125,38 +131,39 @@ const DestinationsProvider = ({ children }) => {
         setIsLoading(false);
       }
     };
-
     fetchHotelOffers();
   }, [hotelsList, startDate, endDate]);
-  useEffect(() => {
-    const getHotelReviews = async () => {
-      const token = await getAccessToken();
-
-      // const hotelIds = hotelOffers.map((item) => item.hotel.hotelId).join(",");
-      try {
-        const response = await axios.get(
-          "https://test.api.amadeus.com/v2/e-reputation/hotel-sentiments",
-          {
-            params: {
-              hotelIds: "BWPAR160",
-            },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getHotelReviews();
-  }, [hotelOffers]);
+  
+  // useEffect(() => {
+  //   const getHotelReviews = async () => {
+  //     // const hotelIds = hotelOffers.map((item) => item.hotel.hotelId).join(",");
+  //     try {
+  //       const response = await axios.get(
+  //         "https://test.api.amadeus.com/v2/e-reputation/hotel-sentiments",
+  //         {
+  //           params: {
+  //             hotelIds: "BWPAR160",
+  //           },
+  //           headers: {
+  //             Authorization: `Bearer ${accessToken}`,
+  //           },
+  //         },
+  //       );
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   getHotelReviews();
+  // }, [hotelOffers]);
   const handleBookingSearch = () => {
     setCurrentCity(inputRef.current.value.trim());
     inputRef.current.value = "";
     setIsLoading(true);
-    setDateRange([null, null]);
+    setHotelOffers([]);
+    if(inputRef.current.value === ""){
+      setCurrentCity((prev) => prev)
+    }
   };
   //weather
   useEffect(() => {
