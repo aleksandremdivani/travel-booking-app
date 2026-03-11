@@ -69,10 +69,12 @@ const HomePage = () => {
           </ul>
         </div>
       </section>
-      <section className="">
+      <section className="flex flex-col items-center pt-4">
         <h2 className="text-[30px] font-bold">Why Choose Us</h2>
         <div>
-          
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
       </section>
     </>

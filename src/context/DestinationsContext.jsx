@@ -2,23 +2,31 @@ import axios from "axios";
 import { createContext, useEffect, useRef, useState } from "react";
 
 const DestinationsContext = createContext();
+const savedHotelOffers = localStorage.getItem("hotelOffers");
 
 const DestinationsProvider = ({ children }) => {
   const [dateRange, setDateRange] = useState([null, null]);
   const [accessToken, setAccessToken] = useState(null);
   const [startDate, endDate] = dateRange;
-  const inputRef = useRef();
-  const [isLoading, setIsLoading] = useState(true);
+  const destinationSearchRef = useRef();
+  const originSearchRef = useRef();
+
+  const [isLoading, setIsLoading] = useState(false);
   //`https://source.unsplash.com/600x400/?${hotel.name},hotel`;
 
-  const [currentCity, setCurrentCity] = useState("");
+  const [destinationCity, setDestinationCity] = useState("");
+  const [originCity, setOriginCity] = useState("");
   //weather
   const [weather, setWeather] = useState(null);
+  //flights
+  const [flights, setFlights] = useState([]);
   //hotels
 
   const [hotelsList, SetHotelsList] = useState([]);
-  const [hotelOffers, setHotelOffers] = useState([]);
-  const [hotelRatings, setHotelRatings] = useState([]);
+  const [hotelOffers, setHotelOffers] = useState(
+    savedHotelOffers ? JSON.parse(savedHotelOffers) : [],
+  );
+  // const [hotelRatings, setHotelRatings] = useState([]);
 
   useEffect(() => {
     const getAccessToken = async () => {
@@ -57,7 +65,65 @@ const DestinationsProvider = ({ children }) => {
 
     return response.data.data[0].iataCode;
   };
+  const searchFlightLocation = async (city) => {
+    const { VITE_RAPIDAPI_API_KEY } = import.meta.env;
 
+    const response = await axios.get(
+      "https://booking-com15.p.rapidapi.com/api/v1/flights/searchDestination",
+      {
+        params: {
+          query: city,
+        },
+        headers: {
+          "X-RapidAPI-Host": "booking-com15.p.rapidapi.com",
+          "X-RapidAPI-Key": VITE_RAPIDAPI_API_KEY,
+        },
+      },
+    );
+    console.log(response.data.data);
+    return response.data.data[0].id;
+  };
+  const formatDate = (date) => {
+    if (!date) return null;
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+  //flights
+  useEffect(() => {
+    const searchFlights = async () => {
+      const { VITE_RAPIDAPI_API_KEY } = import.meta.env;
+
+      try {
+        if (!originCity || !destinationCity || !startDate) return;
+        const fromId = await searchFlightLocation(originCity);
+        const toId = await searchFlightLocation(destinationCity);
+        const response = await axios.get(
+          "https://booking-com15.p.rapidapi.com/api/v1/flights/searchFlights",
+          {
+            params: {
+              fromId,
+              toId,
+              departDate: formatDate(startDate),
+              returnDate: formatDate(endDate),
+            },
+            headers: {
+              "X-RapidAPI-Host": "booking-com15.p.rapidapi.com",
+              "X-RapidAPI-Key": VITE_RAPIDAPI_API_KEY,
+            },
+          },
+        );
+        setFlights(response.data.data);
+        console.log("flights", response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    searchFlights();
+  }, [startDate, endDate, originCity, destinationCity]);
   //hotels
   //https://maps.googleapis.com/maps/api/place/textsearch/json?query=Hotel+Name+City+Name&key=YOUR_API_KEY
   useEffect(() => {
@@ -71,7 +137,7 @@ const DestinationsProvider = ({ children }) => {
           "https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city",
           {
             params: {
-              cityCode: cityCode,
+              cityCode,
             },
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -84,21 +150,11 @@ const DestinationsProvider = ({ children }) => {
         SetHotelsList(response.data.data);
       } catch (error) {}
     };
-    fetchHotelsList(currentCity);
-  }, [currentCity]);
+    fetchHotelsList(destinationCity);
+  }, [destinationCity]);
 
   useEffect(() => {
     const fetchHotelOffers = async () => {
-      const formatDate = (date) => {
-        if (!date) return null;
-
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-
-        return `${year}-${month}-${day}`;
-      };
-
       try {
         if (!hotelsList.length) return;
 
@@ -122,9 +178,9 @@ const DestinationsProvider = ({ children }) => {
             },
           },
         );
-
         console.log(response.data);
         setHotelOffers(response.data.data);
+        localStorage.setItem("hotelOffers", JSON.stringify(response.data.data));
       } catch (error) {
         console.log(error);
       } finally {
@@ -133,7 +189,7 @@ const DestinationsProvider = ({ children }) => {
     };
     fetchHotelOffers();
   }, [hotelsList, startDate, endDate]);
-  
+
   // useEffect(() => {
   //   const getHotelReviews = async () => {
   //     // const hotelIds = hotelOffers.map((item) => item.hotel.hotelId).join(",");
@@ -156,14 +212,29 @@ const DestinationsProvider = ({ children }) => {
   //   };
   //   getHotelReviews();
   // }, [hotelOffers]);
-  const handleBookingSearch = () => {
-    setCurrentCity(inputRef.current.value.trim());
-    inputRef.current.value = "";
+
+  //hotel
+  const handleHotelSearch = () => {
+    setDestinationCity(destinationSearchRef.current.value.trim());
+    destinationSearchRef.current.value = "";
     setIsLoading(true);
     setHotelOffers([]);
-    if(inputRef.current.value === ""){
-      setCurrentCity((prev) => prev)
+    if (destinationSearchRef.current.value.trim() === "") {
+      return;
     }
+  };
+
+  //flight
+  const handleFlightSearch = () => {
+    setDestinationCity(destinationSearchRef.current.value.trim());
+    setOriginCity(originSearchRef.current.value.trim());
+    destinationSearchRef.current.value = "";
+    originSearchRef.current.value = "";
+    setIsLoading(true);
+    if (destinationSearchRef.current.value.trim() === "") {
+      return;
+    }
+    originSearchRef.current.value = "";
   };
   //weather
   useEffect(() => {
@@ -187,11 +258,11 @@ const DestinationsProvider = ({ children }) => {
         console.log(error);
       }
     };
-    fetchWeatherData(currentCity);
-  }, [currentCity]);
+    fetchWeatherData(destinationCity);
+  }, [destinationCity]);
   const handleSearch = () => {
-    setCurrentCity(inputRef.current.value.trim());
-    inputRef.current.value = "";
+    setDestinationCity(destinationSearchRef.current.value.trim());
+    destinationSearchRef.current.value = "";
   };
   const destinations = [
     {
@@ -236,10 +307,10 @@ const DestinationsProvider = ({ children }) => {
       value={{
         destinations,
         weather,
-        setCurrentCity,
+        setDestinationCity,
         setWeather,
         handleSearch,
-        inputRef,
+        destinationSearchRef,
         dateRange,
         startDate,
         setDateRange,
@@ -247,9 +318,13 @@ const DestinationsProvider = ({ children }) => {
         hotelsList,
         hotelOffers,
         setHotelOffers,
-        handleBookingSearch,
+        handleHotelSearch,
         isLoading,
-        currentCity,
+        destinationCity,
+        originCity,
+        flights,
+        handleFlightSearch,
+        originSearchRef,
       }}
     >
       {children}

@@ -36,6 +36,11 @@ const Header = () => {
               isTransparent={isTransparent}
             />
             <NavItem
+              link={"/flights"}
+              label={"Flights"}
+              isTransparent={isTransparent}
+            />
+            <NavItem
               link={"/bookings"}
               label={"My Bookings"}
               isTransparent={isTransparent}

@@ -1,24 +1,24 @@
 import { useContext } from "react";
 import { DestinationsContext } from "../context/DestinationsContext";
 import DateRangePicker from "../components/DateRangePicker";
-import { Loader, Loader2 } from "lucide-react";
+import { Heart, Loader, Loader2 } from "lucide-react";
 
 export const HotelsPage = () => {
   const {
-    inputRef,
-    handleBookingSearch,
+    destinationSearchRef,
+    handleHotelSearch,
     hotelOffers,
     weather,
     isLoading,
-    currentCity,
+    destinationCity,
   } = useContext(DestinationsContext);
   return (
-    <main className="flex flex-col h-180 gap-3">
+    <main className="flex flex-col h-auto gap-3">
       <div className="w-full flex justify-center bg-gray-200">
         <div className="gap-3 rounded-xl w-full max-w-95/100 h-20 justify-center flex flex items-center">
           <input
             type="search"
-            ref={inputRef}
+            ref={destinationSearchRef}
             placeholder="Choose destination"
             className="dest-search w-4/10 h-12 px-12 border border-gray-300 rounded-xl shadow-sm
         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
@@ -29,7 +29,7 @@ export const HotelsPage = () => {
           </div>
 
           <button
-            onClick={handleBookingSearch}
+            onClick={handleHotelSearch}
             className="px-7 h-12  bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300 font-semibold"
           >
             Search
@@ -37,17 +37,17 @@ export const HotelsPage = () => {
         </div>
       </div>
       <div className="h-auto w-full flex items-center flex-col gap-6 ">
-        {hotelOffers && !isLoading && currentCity && (
+        {hotelOffers && !isLoading && destinationCity && (
           <div className="border-b w-full p-4">
             <p>
-              Showing {hotelOffers.length} available hotels in {currentCity}
+              Showing {hotelOffers.length} available hotels in {destinationCity}
             </p>
           </div>
         )}
         <div className="flex flex-col gap-6 w-95/100 ">
           {isLoading && <Loader size={40} />}
           {hotelOffers &&
-          currentCity &&
+            destinationCity &&
             !isLoading &&
             hotelOffers.map((item) => (
               <div
@@ -67,7 +67,7 @@ export const HotelsPage = () => {
                   <h2 className="font-bold text-[18px]">{item.hotel.name}</h2>
                   <div>
                     <p>
-                      📍 {currentCity.toUpperCase()}, {weather.sys.country}
+                      📍 {destinationCity.toUpperCase()}, {weather.sys.country}
                     </p>
                     <p>
                       {item.offers[0].checkInDate}-{item.offers[0].checkOutDate}
@@ -85,6 +85,8 @@ export const HotelsPage = () => {
                       </span>
                       /Night
                     </p>
+                    <Heart />
+
                     <button className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">
                       Book Now
                     </button>
