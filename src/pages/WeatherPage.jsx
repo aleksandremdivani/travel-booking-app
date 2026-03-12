@@ -54,7 +54,7 @@ export const WeatherPage = () => {
                   {/* <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-transparent rounded-2xl"></div> */}
                   {/* <div className="absolute inset-0 bg-black/40 rounded-2xl"></div> */}
 
-                  <div className="md:w-4/10 w-5/10 bg-white/30 backdrop-blur-sm rounded-2xl shadow-2xl p-6 h-full flex flex-col gap-3">
+                  <div className="lg:w-4/10 w-full sm:bg-white/30 backdrop-blur-sm rounded-2xl shadow-2xl p-6 h-full flex flex-col gap-3">
                     <h2 className="text-[40px] font-bold text-white">
                       {weather.name}, {weather.sys.country}
                     </h2>
@@ -74,7 +74,7 @@ export const WeatherPage = () => {
                     />
                   </div>
                 </div>
-                <div className="flex w-full justify-between">
+                <div className="flex w-full justify-between flex-wrap gap-3 justify-center">
                   <DetailsCard
                     label={"Humidity"}
                     value={`${weather.main.humidity}%`}

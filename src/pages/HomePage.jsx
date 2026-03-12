@@ -3,6 +3,18 @@ import { useContext } from "react";
 import { DestinationsContext } from "../context/DestinationsContext";
 import DatePicker from "react-datepicker";
 import DateRangePicker from "../components/DateRangePicker";
+import {
+  BadgeDollarSign,
+  Calendar,
+  CalendarCheck,
+  CircleDollarSign,
+  CloudSun,
+  DollarSign,
+  DollarSignIcon,
+  LucideCircleDollarSign,
+  MonitorCheck,
+} from "lucide-react";
+import { FeaturesCard } from "../components/FeaturesCard";
 
 const HomePage = () => {
   const { destinations } = useContext(DestinationsContext);
@@ -43,7 +55,7 @@ const HomePage = () => {
             {destinations.map((item) => {
               return (
                 <li
-                  className="min-h-80 rounded-lg w-full sm:w-48 lg:w-23/100 bg-white shadow-md"
+                  className="min-h-80 rounded-lg w-full sm:w-48/100 lg:w-23/100 bg-white shadow-md"
                   key={item.id}
                 >
                   <div
@@ -71,10 +83,23 @@ const HomePage = () => {
       </section>
       <section className="flex flex-col items-center pt-4">
         <h2 className="text-[30px] font-bold">Why Choose Us</h2>
-        <div>
-          <div></div>
-          <div></div>
-          <div></div>
+        <div className="w-90/100 h-auto flex lg:justify-between flex-wrap gap-4 justify-center">
+          <FeaturesCard
+            title={"Best Prices"}
+            text={"Competetive prices for top travel destinations worldwide"}
+            icon={<CircleDollarSign className="text-blue-500" size={65}/>}
+          />
+          <FeaturesCard
+            title={"Easy Booking"}
+            text={"Fast, simple and secure booking process"}
+            icon={<CalendarCheck className="text-blue-500" size={65} />}
+          />
+          <FeaturesCard
+            title={"Real-Time Weather"}
+            text={"Live weather updates for your destinations"}
+            icon={<CloudSun className="text-yellow-500" size={65} />}
+            isBottomCard={true}
+          />
         </div>
       </section>
     </>

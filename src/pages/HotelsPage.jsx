@@ -52,10 +52,10 @@ export const HotelsPage = () => {
             hotelOffers.map((item) => (
               <div
                 key={item.hotel.hotelId}
-                className="rounded-xl shadow-xl flex h-[200px] border border-gray-300"
+                className="rounded-xl shadow-xl flex-col sm:flex-row hover:scale-105 hover:shadow-2xl ease transition:all duration-500 h-[400px] flex sm:h-[200px] border border-gray-300"
               >
                 <div
-                  className="h-full w-33/100 rounded-s-xl"
+                  className="sm:h-full h-5/10 w-full sm:w-33/100 rounded-s-xl"
                   style={{
                     backgroundImage: `url(https://picsum.photos/seed/${item.hotel.hotelId}/600/400)`,
                     backgroundPosition: "center",
@@ -63,7 +63,7 @@ export const HotelsPage = () => {
                     backgroundSize: "cover",
                   }}
                 ></div>
-                <div className="pt-3 ps-5 w-75/100 flex flex-col justify-between">
+                <div className="pt-3 ps-5 w-full sm:max-w-67/100 flex flex-col justify-between">
                   <h2 className="font-bold text-[18px]">{item.hotel.name}</h2>
                   <div>
                     <p>

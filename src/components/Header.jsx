@@ -27,7 +27,7 @@ const Header = () => {
         </h2>
       </div>
       <div className="flex items-center gap-6">
-        <nav>
+        <nav className="md:visible invisible">
           <ul className="flex items-center gap-8">
             <NavItem link={"/"} label={"Home"} isTransparent={isTransparent} />
             <NavItem

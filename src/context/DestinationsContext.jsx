@@ -93,37 +93,37 @@ const DestinationsProvider = ({ children }) => {
     return `${year}-${month}-${day}`;
   };
   //flights
-  useEffect(() => {
-    const searchFlights = async () => {
-      const { VITE_RAPIDAPI_API_KEY } = import.meta.env;
+  // useEffect(() => {
+  //   const searchFlights = async () => {
+  //     const { VITE_RAPIDAPI_API_KEY } = import.meta.env;
 
-      try {
-        if (!originCity || !destinationCity || !startDate) return;
-        const fromId = await searchFlightLocation(originCity);
-        const toId = await searchFlightLocation(destinationCity);
-        const response = await axios.get(
-          "https://booking-com15.p.rapidapi.com/api/v1/flights/searchFlights",
-          {
-            params: {
-              fromId,
-              toId,
-              departDate: formatDate(startDate),
-              returnDate: formatDate(endDate),
-            },
-            headers: {
-              "X-RapidAPI-Host": "booking-com15.p.rapidapi.com",
-              "X-RapidAPI-Key": VITE_RAPIDAPI_API_KEY,
-            },
-          },
-        );
-        setFlights(response.data.data);
-        console.log("flights", response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    searchFlights();
-  }, [startDate, endDate, originCity, destinationCity]);
+  //     try {
+  //       if (!originCity || !destinationCity || !startDate) return;
+  //       const fromId = await searchFlightLocation(originCity);
+  //       const toId = await searchFlightLocation(destinationCity);
+  //       const response = await axios.get(
+  //         "https://booking-com15.p.rapidapi.com/api/v1/flights/searchFlights",
+  //         {
+  //           params: {
+  //             fromId,
+  //             toId,
+  //             departDate: formatDate(startDate),
+  //             returnDate: formatDate(endDate),
+  //           },
+  //           headers: {
+  //             "X-RapidAPI-Host": "booking-com15.p.rapidapi.com",
+  //             "X-RapidAPI-Key": VITE_RAPIDAPI_API_KEY,
+  //           },
+  //         },
+  //       );
+  //       setFlights(response.data.data);
+  //       console.log("flights", response.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   searchFlights();
+  // }, [startDate, endDate, originCity, destinationCity]);
   //hotels
   //https://maps.googleapis.com/maps/api/place/textsearch/json?query=Hotel+Name+City+Name&key=YOUR_API_KEY
   useEffect(() => {
@@ -159,7 +159,7 @@ const DestinationsProvider = ({ children }) => {
         if (!hotelsList.length) return;
 
         const hotelIds = hotelsList
-          .slice(0, 50)
+          .slice(0, 30)
           .map((item) => item.hotelId)
           .join(",");
 
@@ -225,17 +225,50 @@ const DestinationsProvider = ({ children }) => {
   };
 
   //flight
-  const handleFlightSearch = () => {
-    setDestinationCity(destinationSearchRef.current.value.trim());
-    setOriginCity(originSearchRef.current.value.trim());
+  const handleFlightSearch = async () => {
+  const { VITE_RAPIDAPI_API_KEY } = import.meta.env;
+
+  const origin = originSearchRef.current.value.trim();
+  const destination = destinationSearchRef.current.value.trim();
+
+  if (!origin || !destination || !startDate) return;
+
+  try {
+    setIsLoading(true);
+
+    const fromId = await searchFlightLocation(origin);
+    const toId = await searchFlightLocation(destination);
+
+    const response = await axios.get(
+      "https://booking-com15.p.rapidapi.com/api/v1/flights/searchFlights",
+      {
+        params: {
+          fromId,
+          toId,
+          departDate: formatDate(startDate),
+          returnDate: formatDate(endDate),
+        },
+        headers: {
+          "X-RapidAPI-Host": "booking-com15.p.rapidapi.com",
+          "X-RapidAPI-Key": VITE_RAPIDAPI_API_KEY,
+        },
+      }
+    );
+
+    setFlights(response.data.data);
+    console.log(response);
+
+    setDestinationCity(destination);
+    setOriginCity(origin);
+
     destinationSearchRef.current.value = "";
     originSearchRef.current.value = "";
-    setIsLoading(true);
-    if (destinationSearchRef.current.value.trim() === "") {
-      return;
-    }
-    originSearchRef.current.value = "";
-  };
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
   //weather
   useEffect(() => {
     const fetchWeatherData = async (city) => {
