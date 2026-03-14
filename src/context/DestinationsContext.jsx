@@ -15,11 +15,12 @@ const DestinationsProvider = ({ children }) => {
   //`https://source.unsplash.com/600x400/?${hotel.name},hotel`;
 
   const [destinationCity, setDestinationCity] = useState("");
-  const [originCity, setOriginCity] = useState("");
+  // const [originCity, setOriginCity] = useState("");
   //weather
   const [weather, setWeather] = useState(null);
-  //flights
-  const [flights, setFlights] = useState([]);
+
+  //tours and activities
+  const [activities, setActivities] = useState([]);
   //hotels
 
   const [hotelsList, SetHotelsList] = useState([]);
@@ -65,24 +66,24 @@ const DestinationsProvider = ({ children }) => {
 
     return response.data.data[0].iataCode;
   };
-  const searchFlightLocation = async (city) => {
-    const { VITE_RAPIDAPI_API_KEY } = import.meta.env;
+  // const searchFlightLocation = async (city) => {
+  //   const { VITE_RAPIDAPI_API_KEY } = import.meta.env;
 
-    const response = await axios.get(
-      "https://booking-com15.p.rapidapi.com/api/v1/flights/searchDestination",
-      {
-        params: {
-          query: city,
-        },
-        headers: {
-          "X-RapidAPI-Host": "booking-com15.p.rapidapi.com",
-          "X-RapidAPI-Key": VITE_RAPIDAPI_API_KEY,
-        },
-      },
-    );
-    console.log(response.data.data);
-    return response.data.data[0].id;
-  };
+  //   const response = await axios.get(
+  //     "https://booking-com15.p.rapidapi.com/api/v1/flights/searchDestination",
+  //     {
+  //       params: {
+  //         query: city,
+  //       },
+  //       headers: {
+  //         "X-RapidAPI-Host": "booking-com15.p.rapidapi.com",
+  //         "X-RapidAPI-Key": VITE_RAPIDAPI_API_KEY,
+  //       },
+  //     },
+  //   );
+  //   console.log(response.data.data);
+  //   return response.data.data[0].id;
+  // };
   const formatDate = (date) => {
     if (!date) return null;
 
@@ -92,38 +93,36 @@ const DestinationsProvider = ({ children }) => {
 
     return `${year}-${month}-${day}`;
   };
-  //flights
-  // useEffect(() => {
-  //   const searchFlights = async () => {
-  //     const { VITE_RAPIDAPI_API_KEY } = import.meta.env;
+  // tours and activities
+  useEffect(() => {
+  if (!weather) return; 
 
-  //     try {
-  //       if (!originCity || !destinationCity || !startDate) return;
-  //       const fromId = await searchFlightLocation(originCity);
-  //       const toId = await searchFlightLocation(destinationCity);
-  //       const response = await axios.get(
-  //         "https://booking-com15.p.rapidapi.com/api/v1/flights/searchFlights",
-  //         {
-  //           params: {
-  //             fromId,
-  //             toId,
-  //             departDate: formatDate(startDate),
-  //             returnDate: formatDate(endDate),
-  //           },
-  //           headers: {
-  //             "X-RapidAPI-Host": "booking-com15.p.rapidapi.com",
-  //             "X-RapidAPI-Key": VITE_RAPIDAPI_API_KEY,
-  //           },
-  //         },
-  //       );
-  //       setFlights(response.data.data);
-  //       console.log("flights", response.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   searchFlights();
-  // }, [startDate, endDate, originCity, destinationCity]);
+  const fetchActivities = async () => {
+    const lat = weather.coord.lat;
+    const lon = weather.coord.lon;
+
+    try {
+      const response = await axios.get(
+        "https://test.api.amadeus.com/v1/shopping/activities",
+        {
+          params: {
+            latitude: lat,
+            longitude: lon,
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+      setActivities(response.data.data);
+      console.log(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  fetchActivities();
+}, [weather]);
   //hotels
   //https://maps.googleapis.com/maps/api/place/textsearch/json?query=Hotel+Name+City+Name&key=YOUR_API_KEY
   useEffect(() => {
@@ -224,51 +223,6 @@ const DestinationsProvider = ({ children }) => {
     }
   };
 
-  //flight
-  const handleFlightSearch = async () => {
-  const { VITE_RAPIDAPI_API_KEY } = import.meta.env;
-
-  const origin = originSearchRef.current.value.trim();
-  const destination = destinationSearchRef.current.value.trim();
-
-  if (!origin || !destination || !startDate) return;
-
-  try {
-    setIsLoading(true);
-
-    const fromId = await searchFlightLocation(origin);
-    const toId = await searchFlightLocation(destination);
-
-    const response = await axios.get(
-      "https://booking-com15.p.rapidapi.com/api/v1/flights/searchFlights",
-      {
-        params: {
-          fromId,
-          toId,
-          departDate: formatDate(startDate),
-          returnDate: formatDate(endDate),
-        },
-        headers: {
-          "X-RapidAPI-Host": "booking-com15.p.rapidapi.com",
-          "X-RapidAPI-Key": VITE_RAPIDAPI_API_KEY,
-        },
-      }
-    );
-
-    setFlights(response.data.data);
-    console.log(response);
-
-    setDestinationCity(destination);
-    setOriginCity(origin);
-
-    destinationSearchRef.current.value = "";
-    originSearchRef.current.value = "";
-  } catch (error) {
-    console.log(error);
-  } finally {
-    setIsLoading(false);
-  }
-};
   //weather
   useEffect(() => {
     const fetchWeatherData = async (city) => {
@@ -354,10 +308,8 @@ const DestinationsProvider = ({ children }) => {
         handleHotelSearch,
         isLoading,
         destinationCity,
-        originCity,
-        flights,
-        handleFlightSearch,
         originSearchRef,
+        activities,
       }}
     >
       {children}

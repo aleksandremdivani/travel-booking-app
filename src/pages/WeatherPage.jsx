@@ -4,7 +4,8 @@ import DetailsCard from "../components/DetailsCard";
 import "../App.css";
 
 export const WeatherPage = () => {
-  const { handleSearch, inputRef, weather } = useContext(DestinationsContext);
+  const { handleSearch, destinationSearchRef, weather } =
+    useContext(DestinationsContext);
 
   return (
     <main
@@ -22,11 +23,11 @@ export const WeatherPage = () => {
             className="text-black p-4 flex-1 rounded-md bg-white outline-none"
             type="search"
             placeholder="Search for a city..."
-            ref={inputRef}
+            ref={destinationSearchRef}
           />
+
           <button
             onClick={handleSearch}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             className="active:opacity-70 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold"
           >
             search
@@ -53,7 +54,6 @@ export const WeatherPage = () => {
                 >
                   {/* <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-transparent rounded-2xl"></div> */}
                   {/* <div className="absolute inset-0 bg-black/40 rounded-2xl"></div> */}
-
                   <div className="lg:w-4/10 w-full sm:bg-white/30 backdrop-blur-sm rounded-2xl shadow-2xl p-6 h-full flex flex-col gap-3">
                     <h2 className="text-[40px] font-bold text-white">
                       {weather.name}, {weather.sys.country}

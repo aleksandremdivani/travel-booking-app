@@ -1,13 +1,14 @@
 import { Sun } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
-export const NavItem = ({ label, isTransparent, link }) => {
+export const NavItem = ({ label, isTransparent, link, isOpen, setIsOpen }) => {
   const location = useLocation();
   const isActive = location.pathname === link;
   return (
     <li className="nav-item flex">
-      {label === "Weather" && <Sun className="mr-1 text-yellow-500" /> }
+      {label === "Weather" && <Sun className="mr-1 text-yellow-500" />}
       <Link
+        onClick={() => isOpen && setIsOpen(false)}
         to={link}
         className={`flex ${
           isActive

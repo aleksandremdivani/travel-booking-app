@@ -34,6 +34,7 @@ h1 {
 
 .react-datepicker-wrapper {
   width: 100%;
+  z-index: 1;
 }
 
 .dest-search {
@@ -41,4 +42,17 @@ h1 {
   background-repeat: no-repeat;
   background-position: center left 6px;
   background-size: 35px;
+}
+
+@media(min-width:870px){
+  .menu {
+    display: none;
+  }
+  
+}
+
+@media(max-width:869px){
+  .header-nav {
+    display: none;
+  }
 }

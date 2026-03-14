@@ -4,15 +4,9 @@ import { DestinationsContext } from "../context/DestinationsContext";
 import DatePicker from "react-datepicker";
 import DateRangePicker from "../components/DateRangePicker";
 import {
-  BadgeDollarSign,
-  Calendar,
   CalendarCheck,
   CircleDollarSign,
   CloudSun,
-  DollarSign,
-  DollarSignIcon,
-  LucideCircleDollarSign,
-  MonitorCheck,
 } from "lucide-react";
 import { FeaturesCard } from "../components/FeaturesCard";
 
