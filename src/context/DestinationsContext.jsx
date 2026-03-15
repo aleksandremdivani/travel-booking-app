@@ -199,14 +199,14 @@ const DestinationsProvider = ({ children }) => {
 
   //hotel
   const calculateTotalStayPrice = (checkIn, checkOut, nightlyPrice) => {
-  if (!checkIn || !checkOut) return 0;
-  const start = new Date(checkIn);
-  const end = new Date(checkOut);
-  const diffInMs = end - start;
-  const nights = Math.max(1, Math.round(diffInMs / (1000 * 60 * 60 * 24)));
+    if (!checkIn || !checkOut) return 0;
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+    const diffInMs = end - start;
+    const nights = Math.max(1, Math.round(diffInMs / (1000 * 60 * 60 * 24)));
 
-  return nights * nightlyPrice;
-};
+    return nights * nightlyPrice;
+  };
 
   const handleHotelSearch = () => {
     if (destinationSearchRef.current.value.trim() === "") {
@@ -236,7 +236,7 @@ const DestinationsProvider = ({ children }) => {
     setWeather(null);
     setBooked(true);
     setHotelOffers([]);
-    setDateRange([null, null])
+    setDateRange([null, null]);
   };
   console.log(bookings);
   const handleHotelSelect = (hotel) => {
@@ -264,19 +264,20 @@ const DestinationsProvider = ({ children }) => {
   };
   const getConvertRate = (hotel) => {
     const hotelCurrency = hotel.offers[0].price.currency;
-    const rateData = hotelOffers?.dictionaries?.currencyConversionLookupRates?.[hotelCurrency];
+    const rateData =
+      hotelOffers?.dictionaries?.currencyConversionLookupRates?.[hotelCurrency];
     return rateData ? Number(rateData.rate) : 1;
   };
 
   const totalPrice = selectedHotels.reduce((sum, item) => {
     const nightlyPriceUSD = Math.round(
-      (Number(item.offers[0].price.base) || Number(item.offers[0].price.total)) * 
-      getConvertRate(item)
+      (Number(item.offers[0].price.base) ||
+        Number(item.offers[0].price.total)) * getConvertRate(item),
     );
     const stayTotalPrice = calculateTotalStayPrice(
       item.offers[0].checkInDate,
       item.offers[0].checkOutDate,
-      nightlyPriceUSD
+      nightlyPriceUSD,
     );
 
     return sum + stayTotalPrice;
@@ -320,13 +321,14 @@ const DestinationsProvider = ({ children }) => {
       shortDescription: "The city of lights and romance.",
     },
     {
-      id: "bali",
-      name: "Bali",
-      country: "Indonesia",
+      id: "barcelona",
+      name: "Barcelona",
+      country: "Spain",
       airportCode: "DPS",
       price: 499,
       image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-      shortDescription: "Tropical paradise with stunning beaches.",
+      shortDescription:
+        "A lively Spanish city on the Mediterranean, known for beaches and unique architecture.",
     },
     {
       id: "tokyo",

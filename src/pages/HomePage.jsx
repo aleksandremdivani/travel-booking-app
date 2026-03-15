@@ -14,7 +14,6 @@ const HomePage = () => {
     setDestinationCity,
     destinationSearchRef,
     handleHotelSearch,
-    setIsLoading,
   } = useContext(DestinationsContext);
 
   return (
@@ -29,25 +28,25 @@ const HomePage = () => {
               Find and book amazing travel deals easily
             </p>
           </div>
-          <form className="px-3 gap-3 rounded-xl border w-full max-w-90/100 h-20 flex bg-orange-400 flex items-center">
+          <form className="flex-col py-5 px-3 sm:flex-row gap-3 rounded-xl border w-full max-w-90/100 min-h-20 flex bg-orange-400 flex items-center">
             <input
               type="search"
               ref={destinationSearchRef}
               placeholder="Choose destination"
-              className="dest-search w-4/10 h-12 px-11 border border-gray-300 rounded-xl shadow-sm
+              className="dest-search w-7/10 sm:w-4/10 h-12 px-11 border border-gray-300 rounded-xl shadow-sm
         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
         hover:border-gray-400 transition text-gray-700 bg-white"
             />
-            <div className="w-40/100">
+            <div className="sm:w-4/10 w-7/10">
               <DateRangePicker />
             </div>
             <button
-              type="button" // Use type="button" to prevent form refresh
+              type="button" 
               onClick={() => {
                 handleHotelSearch();
                 navigate("/hotels");
               }}
-              className="px-7 h-12 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300 font-semibold"
+              className="sm:px-7 w-40 h-12 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300 font-semibold"
             >
               Search
             </button>
