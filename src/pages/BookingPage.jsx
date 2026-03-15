@@ -296,7 +296,7 @@ export const BookingPage = () => {
         </div>
         <button
           onClick={handleBooking}
-          className="w-full lg:px-5 py-2 rounded-lg font-semibold bg-blue-600 text-white hover:bg-blue-700 active:opacity-70"
+          className="w-full lg:w-30 py-2 rounded-lg font-semibold bg-blue-600 text-white hover:bg-blue-700 active:opacity-70"
         >
           Book Now
         </button>
