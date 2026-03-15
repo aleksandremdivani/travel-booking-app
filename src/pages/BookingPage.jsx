@@ -155,15 +155,15 @@ export const BookingPage = () => {
                   key={item.hotel.hotelId}
                   className="rounded-xl shadow-xl flex-col sm:flex-row hover:scale-105 hover:shadow-2xl ease transition:all duration-500 w-full h-[400px] flex sm:h-[200px] border border-gray-300"
                 >
-                  <div
-                    className="sm:h-full h-5/10 w-full sm:w-33/100 rounded-s-xl"
-                    style={{
-                      backgroundImage: `url(https://picsum.photos/seed/${item.hotel.hotelId}/600/400)`,
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                      backgroundSize: "cover",
-                    }}
-                  ></div>
+                  <div className="sm:h-full h-5/10 w-full sm:w-33/100 rounded-s-xl">
+                    <img
+                      src={`https://picsum.photos/seed/${item.hotel.hotelId}/300/200.webp`}
+                      width="300"
+                      height="200"
+                      loading="lazy"
+                      className="w-full h-full object-cover rounded-l-xl"
+                    />
+                  </div>
                   <div className="pt-3 ps-5 w-full sm:max-w-67/100 flex flex-col justify-between">
                     <h2 className="font-bold text-[18px]">{item.hotel.name}</h2>
                     <div>

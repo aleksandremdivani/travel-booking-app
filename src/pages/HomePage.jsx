@@ -5,11 +5,17 @@ import DatePicker from "react-datepicker";
 import DateRangePicker from "../components/DateRangePicker";
 import { CalendarCheck, CircleDollarSign, CloudSun } from "lucide-react";
 import { FeaturesCard } from "../components/FeaturesCard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const HomePage = () => {
-  const { destinations, setDestinationCity } =
-    useContext(DestinationsContext);
+  const navigate = useNavigate();
+  const {
+    destinations,
+    setDestinationCity,
+    destinationSearchRef,
+    handleHotelSearch,
+    setIsLoading,
+  } = useContext(DestinationsContext);
 
   return (
     <>
@@ -26,6 +32,7 @@ const HomePage = () => {
           <form className="px-3 gap-3 rounded-xl border w-full max-w-90/100 h-20 flex bg-orange-400 flex items-center">
             <input
               type="search"
+              ref={destinationSearchRef}
               placeholder="Choose destination"
               className="dest-search w-4/10 h-12 px-11 border border-gray-300 rounded-xl shadow-sm
         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
@@ -34,7 +41,14 @@ const HomePage = () => {
             <div className="w-40/100">
               <DateRangePicker />
             </div>
-            <button className="px-7 h-12  bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300 font-semibold">
+            <button
+              type="button" // Use type="button" to prevent form refresh
+              onClick={() => {
+                handleHotelSearch();
+                navigate("/hotels");
+              }}
+              className="px-7 h-12 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300 font-semibold"
+            >
               Search
             </button>
           </form>
@@ -62,16 +76,15 @@ const HomePage = () => {
                     <p>{item.shortDescription}</p>
                     <p>From {item.price}$</p>
                     <div className="flex justify-end items-end">
-                      <Link to="/hotels"> 
-                        <button
-                          onClick={() =>
-                            setDestinationCity(item.name)
-                          }
-                          className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold"
-                        >
-                          See Hotels
-                        </button>
-                      </Link>
+                      <button
+                        onClick={() => {
+                          setDestinationCity(item.name);
+                          navigate("/hotels");
+                        }}
+                        className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold"
+                      >
+                        See Hotels
+                      </button>
                     </div>
                   </div>
                 </li>

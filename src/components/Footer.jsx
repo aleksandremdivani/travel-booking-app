@@ -10,7 +10,7 @@ export const Footer = () => {
             <a href="https://geolab.edu.ge/" target="_blank">
               <img
                 src="/assets/geolab-logo-blue.png"
-                className="w-10 h-auto hover:scale-112 transition-transform ease-in 0.3s"
+                className="w-10 h-12 hover:scale-112 transition-transform ease-in 0.3s"
                 alt="logo"
               />
             </a>

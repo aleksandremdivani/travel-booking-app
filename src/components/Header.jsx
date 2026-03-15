@@ -74,7 +74,7 @@ const Header = () => {
           className={`menu ${isOpen && "invisible"}`}
           onClick={() => setIsOpen(true)}
         >
-          <Menu />
+          <Menu className={`${isTransparent ? "text-white" : "text-black"}`}/>
         </div>
       </header>
       <div

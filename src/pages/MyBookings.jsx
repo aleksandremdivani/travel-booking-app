@@ -28,15 +28,15 @@ export const MyBookings = () => {
                 key={item.id}
                 className="rounded-xl shadow-xl bg-white flex-col sm:flex-row hover:scale-105 hover:shadow-2xl ease transition:all duration-500 h-[400px] flex sm:h-[200px] border border-gray-300"
               >
-                <div
-                  className="sm:h-full h-5/10 w-full rounded-t-xl sm:w-33/100 sm:rounded-s-xl"
-                  style={{
-                    backgroundImage: `url(https://picsum.photos/seed/${item.id}/600/400)`,
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "cover",
-                  }}
-                ></div>
+                <div className="sm:h-full h-5/10 w-full rounded-t-xl sm:w-33/100 sm:rounded-s-xl">
+                  <img
+                    src={`https://picsum.photos/seed/${item.hotel.hotelId}/400/300.webp`}
+                    width="300"
+                    height="200"
+                    loading="lazy"
+                    className="w-full h-full object-cover rounded-l-xl"
+                  />
+                </div>
                 <div className="pt-3 ps-5 w-full h-5/10 sm:h-full sm:max-w-67/100 flex flex-col justify-between">
                   <h2 className="font-bold text-[18px]">
                     {item.hotelData.hotel.name}
@@ -71,6 +71,11 @@ export const MyBookings = () => {
               </div>
             );
           })}
+        {bookings.length === 0 && (
+          <div className="w-full flex justify-center">
+            <p>No bookings yet</p>
+          </div>
+        )}
       </section>
     </main>
   );

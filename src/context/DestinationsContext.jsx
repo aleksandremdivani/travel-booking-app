@@ -235,7 +235,8 @@ const DestinationsProvider = ({ children }) => {
     setActivities([]);
     setWeather(null);
     setBooked(true);
-    setHotelOffers(null);
+    setHotelOffers([]);
+    setDateRange([null, null])
   };
   console.log(bookings);
   const handleHotelSelect = (hotel) => {

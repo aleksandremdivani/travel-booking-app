@@ -22,7 +22,7 @@ export const ActivitiesPage = () => {
       <div
         className="h-[500px] flex flex-col justify-center items-center"
         style={{
-          backgroundImage: `url(/assets/tours&activities-bg-img.png)`,
+          backgroundImage: `url(/assets/tours&activities-bg-img.webp)`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
