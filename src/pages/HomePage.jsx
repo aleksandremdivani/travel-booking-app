@@ -8,7 +8,7 @@ import { FeaturesCard } from "../components/FeaturesCard";
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
-  const { destinations, destinationSearchRef } =
+  const { destinations, setDestinationCity } =
     useContext(DestinationsContext);
 
   return (
@@ -65,7 +65,7 @@ const HomePage = () => {
                       <Link to="/hotels"> 
                         <button
                           onClick={() =>
-                            destinationSearchRef.current.value === item.name
+                            setDestinationCity(item.name)
                           }
                           className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold"
                         >

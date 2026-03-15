@@ -1,22 +1,25 @@
 import { useContext } from "react";
 import { DestinationsContext } from "../context/DestinationsContext";
 import DateRangePicker from "../components/DateRangePicker";
-import { Heart, Loader, Loader2 } from "lucide-react";
+import { ArrowBigRightIcon, Heart, Loader, Loader2 } from "lucide-react";
 import { HotelBtn } from "../components/HotelBtn";
+import { Link } from "react-router-dom";
 
 export const HotelsPage = () => {
   const {
     destinationSearchRef,
     handleHotelSearch,
     hotelOffers,
+    calculateTotalStayPrice,
     weather,
     isLoading,
     destinationCity,
-    handleHotelSelect,
     selectedHotels,
+    getConvertRate,
   } = useContext(DestinationsContext);
+
   return (
-    <main className="flex flex-col h-auto gap-3">
+    <main className="flex flex-col h-auto gap-3 mb-5">
       <div className="w-full flex justify-center bg-gray-200 py-5">
         <div className="gap-3 rounded-xl w-full max-w-95/100 justify-center flex flex-col md:flex-row  items-center">
           <input
@@ -40,16 +43,20 @@ export const HotelsPage = () => {
         </div>
       </div>
       <div className="h-auto w-full flex items-center flex-col gap-6 ">
-        {hotelOffers && !isLoading && destinationCity && (
-          <div className="border-b w-full p-4">
+        <div className="border-b w-full p-4 flex justify-between">
+          {hotelOffers && !isLoading && destinationCity && (
             <p>
               Showing {hotelOffers.length} available hotels in {destinationCity}
             </p>
-          </div>
-        )}
+          )}
+          {selectedHotels.length !== 0 && (
+            <Link to="/booking" className="text-blue-500 flex items-center gap-2">Go to Booking  <ArrowBigRightIcon/></Link>
+          )}
+        </div>
+
         <div className="flex flex-col gap-6 w-95/100 ">
           {!hotelOffers && (
-            <div className="h-200">
+            <div>
               <p>Search for hotels to see results</p>
             </div>
           )}
@@ -64,6 +71,11 @@ export const HotelsPage = () => {
             hotelOffers.map((item) => {
               const isSelected = selectedHotels.find(
                 (i) => i.hotel.hotelId === item.hotel.hotelId,
+              );
+
+              const nightlyUSD = Math.round(
+                (item.offers[0].price.base || item.offers[0].price.total) *
+                  getConvertRate(item),
               );
 
               return (
@@ -85,7 +97,7 @@ export const HotelsPage = () => {
                     <div>
                       <p>
                         📍 {destinationCity.toUpperCase()},{" "}
-                        {weather.sys.country}
+                        {weather?.sys?.country}
                       </p>
                       <p>
                         {item.offers[0].checkInDate}-
@@ -93,18 +105,25 @@ export const HotelsPage = () => {
                       </p>
                     </div>
                     <div className="flex justify-between w-full items-center pe-4 pb-5">
-                      <p>
-                        From
-                        <span className="text-[18px] font-bold ms-2">
-                          {item.offers[0].price.base
-                            ? item.offers[0].price.base
-                            : Math.round(item.offers[0].price.total)}
-
-                          {item.offers[0].price.currency}
-                        </span>
-                        /Night
-                      </p>
-                     <HotelBtn isSelected={isSelected} item={item}/>
+                      <div>
+                        <p>
+                          From
+                          <span className="text-[18px] font-bold ms-2">
+                            {nightlyUSD} USD
+                          </span>
+                          /Night
+                        </p>
+                        <p className="text-blue-600 font-bold">
+                          Total:{" "}
+                          {calculateTotalStayPrice(
+                            item.offers[0].checkInDate,
+                            item.offers[0].checkOutDate,
+                            nightlyUSD,
+                          )}{" "}
+                          USD
+                        </p>
+                      </div>
+                      <HotelBtn isSelected={isSelected} item={item} />
                     </div>
                   </div>
                 </div>

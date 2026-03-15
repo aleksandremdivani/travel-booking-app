@@ -2,19 +2,33 @@ import axios from "axios";
 import { createContext, useEffect, useRef, useState } from "react";
 
 const DestinationsContext = createContext();
+const savedDates = localStorage.getItem("dateRange");
 
 const DestinationsProvider = ({ children }) => {
-  const [dateRange, setDateRange] = useState([null, null]);
+  const [dateRange, setDateRange] = useState(() => {
+    if (!savedDates) return [null, null];
+
+    const parsed = JSON.parse(savedDates);
+    return [
+      parsed[0] ? new Date(parsed[0]) : null,
+      parsed[1] ? new Date(parsed[1]) : null,
+    ];
+  });
   const [accessToken, setAccessToken] = useState(null);
   const [startDate, endDate] = dateRange;
   const destinationSearchRef = useRef();
   const originSearchRef = useRef();
-
+  const [bookings, setBookings] = useState(() => {
+    const savedBookings = localStorage.getItem("bookings");
+    return savedBookings ? JSON.parse(savedBookings) : [];
+  });
   const [isLoading, setIsLoading] = useState(false);
+  const [booked, setBooked] = useState(false);
   //`https://source.unsplash.com/600x400/?${hotel.name},hotel`;
 
-  const [destinationCity, setDestinationCity] = useState("");
-  // const [originCity, setOriginCity] = useState("");
+  const [destinationCity, setDestinationCity] = useState(() => {
+    return localStorage.getItem("destinationCity") || "";
+  });
   //weather
   const [weather, setWeather] = useState(null);
 
@@ -25,13 +39,21 @@ const DestinationsProvider = ({ children }) => {
   const [hotelsList, SetHotelsList] = useState([]);
   const [hotelOffers, setHotelOffers] = useState(null);
   const [selectedHotels, setSelectedHotels] = useState(() => {
-  const saved = localStorage.getItem("selectedHotels");
-  return saved ? JSON.parse(saved) : [];
-});
-  // const [hotelRatings, setHotelRatings] = useState([]);
+    const saved = localStorage.getItem("selectedHotels");
+    return saved ? JSON.parse(saved) : [];
+  });
   useEffect(() => {
-  localStorage.setItem("selectedHotels", JSON.stringify(selectedHotels));
-}, [selectedHotels]);
+    localStorage.setItem("dateRange", JSON.stringify(dateRange));
+  }, [dateRange]);
+  useEffect(() => {
+    localStorage.setItem("destinationCity", destinationCity);
+  }, [destinationCity]);
+  useEffect(() => {
+    localStorage.setItem("selectedHotels", JSON.stringify(selectedHotels));
+  }, [selectedHotels]);
+  useEffect(() => {
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+  }, [bookings]);
   useEffect(() => {
     const getAccessToken = async () => {
       try {
@@ -69,24 +91,7 @@ const DestinationsProvider = ({ children }) => {
 
     return response.data.data[0].iataCode;
   };
-  // const searchFlightLocation = async (city) => {
-  //   const { VITE_RAPIDAPI_API_KEY } = import.meta.env;
 
-  //   const response = await axios.get(
-  //     "https://booking-com15.p.rapidapi.com/api/v1/flights/searchDestination",
-  //     {
-  //       params: {
-  //         query: city,
-  //       },
-  //       headers: {
-  //         "X-RapidAPI-Host": "booking-com15.p.rapidapi.com",
-  //         "X-RapidAPI-Key": VITE_RAPIDAPI_API_KEY,
-  //       },
-  //     },
-  //   );
-  //   console.log(response.data.data);
-  //   return response.data.data[0].id;
-  // };
   const formatDate = (date) => {
     if (!date) return null;
 
@@ -192,30 +197,17 @@ const DestinationsProvider = ({ children }) => {
     fetchHotelOffers();
   }, [hotelsList, startDate, endDate]);
 
-  // useEffect(() => {
-  //   const getHotelReviews = async () => {
-  //     // const hotelIds = hotelOffers.map((item) => item.hotel.hotelId).join(",");
-  //     try {
-  //       const response = await axios.get(
-  //         "https://test.api.amadeus.com/v2/e-reputation/hotel-sentiments",
-  //         {
-  //           params: {
-  //             hotelIds: "BWPAR160",
-  //           },
-  //           headers: {
-  //             Authorization: `Bearer ${accessToken}`,
-  //           },
-  //         },
-  //       );
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   getHotelReviews();
-  // }, [hotelOffers]);
-
   //hotel
+  const calculateTotalStayPrice = (checkIn, checkOut, nightlyPrice) => {
+  if (!checkIn || !checkOut) return 0;
+  const start = new Date(checkIn);
+  const end = new Date(checkOut);
+  const diffInMs = end - start;
+  const nights = Math.max(1, Math.round(diffInMs / (1000 * 60 * 60 * 24)));
+
+  return nights * nightlyPrice;
+};
+
   const handleHotelSearch = () => {
     if (destinationSearchRef.current.value.trim() === "") {
       return;
@@ -224,25 +216,70 @@ const DestinationsProvider = ({ children }) => {
     destinationSearchRef.current.value = "";
     setIsLoading(true);
     setHotelOffers([]);
+    setBooked(false);
   };
+  const handleBooking = () => {
+    if (selectedHotels.length === 0) return;
+
+    const newBooking = selectedHotels.map((item) => {
+      return {
+        hotelData: item,
+        id: `TRIP-${Date.now()}-${Math.random().toString(36).toUpperCase().substring(2, 7)}`,
+        city: destinationCity,
+        country: weather?.sys?.country || "",
+      };
+    });
+    setBookings((prev) => [...prev, ...newBooking]);
+    setSelectedHotels([]);
+    setDestinationCity("");
+    setActivities([]);
+    setWeather(null);
+    setBooked(true);
+    setHotelOffers(null);
+  };
+  console.log(bookings);
   const handleHotelSelect = (hotel) => {
     setSelectedHotels((prev) => {
-      const exists = prev.find(
-        (item) => item.hotel.hotelId === hotel.hotel.hotelId,
+      const isAlreadySelected = prev.find(
+        (item) =>
+          item.hotel.hotelId === hotel.hotel.hotelId &&
+          item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
+          item.offers[0].checkOutDate === hotel.offers[0].checkOutDate,
       );
-      if (exists) {
+
+      if (isAlreadySelected) {
         return prev.filter(
-          (item) => item.hotel.hotelId !== hotel.hotel.hotelId,
+          (item) =>
+            !(
+              item.hotel.hotelId === hotel.hotel.hotelId &&
+              item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
+              item.offers[0].checkOutDate === hotel.offers[0].checkOutDate
+            ),
         );
       } else {
-        const selected = hotelOffers.find(
-          (item) => item.hotel.hotelId === hotel.hotel.hotelId,
-        );
-        return [...prev, selected];
+        return [...prev, hotel];
       }
     });
   };
-  console.log(selectedHotels);
+  const getConvertRate = (hotel) => {
+    const hotelCurrency = hotel.offers[0].price.currency;
+    const rateData = hotelOffers?.dictionaries?.currencyConversionLookupRates?.[hotelCurrency];
+    return rateData ? Number(rateData.rate) : 1;
+  };
+
+  const totalPrice = selectedHotels.reduce((sum, item) => {
+    const nightlyPriceUSD = Math.round(
+      (Number(item.offers[0].price.base) || Number(item.offers[0].price.total)) * 
+      getConvertRate(item)
+    );
+    const stayTotalPrice = calculateTotalStayPrice(
+      item.offers[0].checkInDate,
+      item.offers[0].checkOutDate,
+      nightlyPriceUSD
+    );
+
+    return sum + stayTotalPrice;
+  }, 0);
   //weather
   useEffect(() => {
     const fetchWeatherData = async (city) => {
@@ -333,6 +370,14 @@ const DestinationsProvider = ({ children }) => {
         accessToken,
         handleHotelSelect,
         selectedHotels,
+        totalPrice,
+        handleBooking,
+        bookings,
+        booked,
+        calculateTotalStayPrice,
+        getConvertRate,
+        totalPrice,
+        setBookings,
       }}
     >
       {children}

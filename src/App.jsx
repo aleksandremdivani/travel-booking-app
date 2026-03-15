@@ -7,6 +7,7 @@ import { ActivityDetailsPage } from "./pages/ActivityPage";
 import { MainLayout } from "./layouts/MainLayout";
 import { ActivitiesLayout } from "./layouts/ActivitiesLayout";
 import { BookingPage } from "./pages/BookingPage";
+import { MyBookings } from "./pages/MyBookings";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route element={<ActivitiesPage />} path="/tours&activities" />
           <Route element={<WeatherPage />} path="/weather" />
           <Route element={<BookingPage/>} path="/booking"/>
+          <Route element={<MyBookings/>} path="/bookings"/>
         </Route>
         <Route element={<ActivitiesLayout/>} path="/tours&activities/activity">
           <Route
