@@ -2,7 +2,6 @@ import axios from "axios";
 import { createContext, useEffect, useRef, useState } from "react";
 
 const DestinationsContext = createContext();
-const savedHotelOffers = localStorage.getItem("hotelOffers");
 
 const DestinationsProvider = ({ children }) => {
   const [dateRange, setDateRange] = useState([null, null]);
@@ -21,14 +20,18 @@ const DestinationsProvider = ({ children }) => {
 
   //tours and activities
   const [activities, setActivities] = useState([]);
+
   //hotels
-
   const [hotelsList, SetHotelsList] = useState([]);
-  const [hotelOffers, setHotelOffers] = useState(
-    savedHotelOffers ? JSON.parse(savedHotelOffers) : [],
-  );
+  const [hotelOffers, setHotelOffers] = useState(null);
+  const [selectedHotels, setSelectedHotels] = useState(() => {
+  const saved = localStorage.getItem("selectedHotels");
+  return saved ? JSON.parse(saved) : [];
+});
   // const [hotelRatings, setHotelRatings] = useState([]);
-
+  useEffect(() => {
+  localStorage.setItem("selectedHotels", JSON.stringify(selectedHotels));
+}, [selectedHotels]);
   useEffect(() => {
     const getAccessToken = async () => {
       try {
@@ -95,34 +98,35 @@ const DestinationsProvider = ({ children }) => {
   };
   // tours and activities
   useEffect(() => {
-  if (!weather) return; 
+    if (!weather) return;
 
-  const fetchActivities = async () => {
-    const lat = weather.coord.lat;
-    const lon = weather.coord.lon;
+    const fetchActivities = async () => {
+      const lat = weather.coord.lat;
+      const lon = weather.coord.lon;
 
-    try {
-      const response = await axios.get(
-        "https://test.api.amadeus.com/v1/shopping/activities",
-        {
-          params: {
-            latitude: lat,
-            longitude: lon,
+      try {
+        const response = await axios.get(
+          "https://test.api.amadeus.com/v1/shopping/activities",
+          {
+            params: {
+              latitude: lat,
+              longitude: lon,
+            },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
           },
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-      setActivities(response.data.data);
-      console.log(response.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+        );
+        setActivities(response.data.data);
+        console.log(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-  fetchActivities();
-}, [weather]);
+    fetchActivities();
+  }, [weather, accessToken]);
+
   //hotels
   //https://maps.googleapis.com/maps/api/place/textsearch/json?query=Hotel+Name+City+Name&key=YOUR_API_KEY
   useEffect(() => {
@@ -150,7 +154,7 @@ const DestinationsProvider = ({ children }) => {
       } catch (error) {}
     };
     fetchHotelsList(destinationCity);
-  }, [destinationCity]);
+  }, [destinationCity, accessToken]);
 
   useEffect(() => {
     const fetchHotelOffers = async () => {
@@ -179,7 +183,6 @@ const DestinationsProvider = ({ children }) => {
         );
         console.log(response.data);
         setHotelOffers(response.data.data);
-        localStorage.setItem("hotelOffers", JSON.stringify(response.data.data));
       } catch (error) {
         console.log(error);
       } finally {
@@ -214,15 +217,32 @@ const DestinationsProvider = ({ children }) => {
 
   //hotel
   const handleHotelSearch = () => {
+    if (destinationSearchRef.current.value.trim() === "") {
+      return;
+    }
     setDestinationCity(destinationSearchRef.current.value.trim());
     destinationSearchRef.current.value = "";
     setIsLoading(true);
     setHotelOffers([]);
-    if (destinationSearchRef.current.value.trim() === "") {
-      return;
-    }
   };
-
+  const handleHotelSelect = (hotel) => {
+    setSelectedHotels((prev) => {
+      const exists = prev.find(
+        (item) => item.hotel.hotelId === hotel.hotel.hotelId,
+      );
+      if (exists) {
+        return prev.filter(
+          (item) => item.hotel.hotelId !== hotel.hotel.hotelId,
+        );
+      } else {
+        const selected = hotelOffers.find(
+          (item) => item.hotel.hotelId === hotel.hotel.hotelId,
+        );
+        return [...prev, selected];
+      }
+    });
+  };
+  console.log(selectedHotels);
   //weather
   useEffect(() => {
     const fetchWeatherData = async (city) => {
@@ -310,6 +330,9 @@ const DestinationsProvider = ({ children }) => {
         destinationCity,
         originSearchRef,
         activities,
+        accessToken,
+        handleHotelSelect,
+        selectedHotels,
       }}
     >
       {children}

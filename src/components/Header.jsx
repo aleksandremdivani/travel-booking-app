@@ -8,7 +8,9 @@ const Header = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
-  const isTransparent = location.pathname === "/weather" || "/tours&activities";
+  const isTransparent =
+    location.pathname === "/weather" ||
+    location.pathname === "/tours&activities";
   return (
     <>
       <header
@@ -50,9 +52,9 @@ const Header = () => {
                 isTransparent={isTransparent}
               />
               <NavItem
-              link={"/tours&activities"}
-              label={"Tours And Activities"}
-              isTransparent={isTransparent}
+                link={"/tours&activities"}
+                label={"Tours And Activities"}
+                isTransparent={isTransparent}
               />
 
               <NavItem
@@ -63,7 +65,9 @@ const Header = () => {
             </ul>
           </nav>
           <button className="hidden sm:block px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">
+            <Link to="/booking">
             Book Now
+            </Link>
           </button>
         </div>
         <div
@@ -73,23 +77,9 @@ const Header = () => {
           <Menu />
         </div>
       </header>
-      {/* {isOpen && (
-        <div className="fixed inset-0 flex">
-          <aside
-            className={`w-64 h-full bg-black text-white p-4
-      transform transition-transform duration-300 ease-in-out
-      ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
-          >
-            menu
-          </aside>
-
-          <div
-            className="flex-1 bg-black/20"
-            onClick={() => setIsOpen(false)}
-          />
-        </div>
-      )} */}
-      <div className={`fixed inset-0 flex z-2 ${!isOpen && "pointer-events-none"}`}>
+      <div
+        className={`fixed inset-0 flex z-2 ${!isOpen && "pointer-events-none"}`}
+      >
         <aside
           className={`w-64 h-full p-4 bg-white
     transform transition-transform duration-200 ease-in-out
@@ -112,6 +102,10 @@ const Header = () => {
                   setIsOpen={setIsOpen}
                 />
                 <NavItem
+                  link={"/tours&activities"}
+                  label={"Tours And Activities"}
+                />
+                <NavItem
                   link={"/bookings"}
                   label={"My Bookings"}
                   isOpen={isOpen}
@@ -125,9 +119,11 @@ const Header = () => {
                 />
               </ul>
             </nav>
-            <button className="sm:hidden block px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">
-              Book Now
-            </button>
+            <Link to="/booking">
+              <button className="sm:hidden block px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">
+                Book Now
+              </button>
+            </Link>
           </div>
         </aside>
         <div

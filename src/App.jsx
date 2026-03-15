@@ -1,21 +1,31 @@
 import HomePage from "./pages/HomePage";
-import { Route, Routes } from "react-router-dom";
-import Header from "./components/Header";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { HotelsPage } from "./pages/HotelsPage";
 import { WeatherPage } from "./pages/WeatherPage";
 import { ActivitiesPage } from "./pages/ToursAndActivities";
+import { ActivityDetailsPage } from "./pages/ActivityPage";
+import { MainLayout } from "./layouts/MainLayout";
+import { ActivitiesLayout } from "./layouts/ActivitiesLayout";
+import { BookingPage } from "./pages/BookingPage";
 
 function App() {
-  
-
   return (
     <>
-      <Header />
       <Routes>
-        <Route element={<HomePage />} path="/" />
-        <Route element={<HotelsPage/>} path="/hotels"/>
-        <Route element={<ActivitiesPage/>} path="/tours&activities"/>
-        <Route element={<WeatherPage/>} path="/weather"/>
+        <Route element={<MainLayout />}>
+          <Route element={<HomePage />} path="/" />
+          <Route element={<HotelsPage />} path="/hotels" />
+          <Route element={<ActivitiesPage />} path="/tours&activities" />
+          <Route element={<WeatherPage />} path="/weather" />
+          <Route element={<BookingPage/>} path="/booking"/>
+        </Route>
+        <Route element={<ActivitiesLayout/>} path="/tours&activities/activity">
+          <Route
+          element={<ActivityDetailsPage />}
+          path=":id"
+        />
+        </Route>
+        
       </Routes>
     </>
   );

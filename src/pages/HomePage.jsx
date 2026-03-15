@@ -3,15 +3,13 @@ import { useContext } from "react";
 import { DestinationsContext } from "../context/DestinationsContext";
 import DatePicker from "react-datepicker";
 import DateRangePicker from "../components/DateRangePicker";
-import {
-  CalendarCheck,
-  CircleDollarSign,
-  CloudSun,
-} from "lucide-react";
+import { CalendarCheck, CircleDollarSign, CloudSun } from "lucide-react";
 import { FeaturesCard } from "../components/FeaturesCard";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
-  const { destinations } = useContext(DestinationsContext);
+  const { destinations, destinationSearchRef } =
+    useContext(DestinationsContext);
 
   return (
     <>
@@ -64,9 +62,16 @@ const HomePage = () => {
                     <p>{item.shortDescription}</p>
                     <p>From {item.price}$</p>
                     <div className="flex justify-end items-end">
-                      <button className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">
-                        Book Now
-                      </button>
+                      <Link to="/hotels"> 
+                        <button
+                          onClick={() =>
+                            destinationSearchRef.current.value === item.name
+                          }
+                          className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold"
+                        >
+                          See Hotels
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </li>
@@ -75,13 +80,13 @@ const HomePage = () => {
           </ul>
         </div>
       </section>
-      <section className="flex flex-col items-center pt-4">
+      <section className="flex flex-col items-center pb-7 pt-4">
         <h2 className="text-[30px] font-bold">Why Choose Us</h2>
         <div className="w-90/100 h-auto flex lg:justify-between flex-wrap gap-4 justify-center">
           <FeaturesCard
             title={"Best Prices"}
             text={"Competetive prices for top travel destinations worldwide"}
-            icon={<CircleDollarSign className="text-blue-500" size={65}/>}
+            icon={<CircleDollarSign className="text-blue-500" size={65} />}
           />
           <FeaturesCard
             title={"Easy Booking"}
