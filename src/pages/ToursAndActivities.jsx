@@ -3,8 +3,7 @@ import { DestinationsContext } from "../context/DestinationsContext";
 import { Link } from "react-router-dom";
 
 export const ActivitiesPage = () => {
-  const { activities, destinationSearchRef, handleSearch } =
-    useContext(DestinationsContext);
+  const { activities, destinationSearchRef, handleSearch } = useContext(DestinationsContext);
   const truncateByWords = (text, maxLength = 150) => {
     if (!text) return "";
     const plainText = text.replace(/<[^>]+>/g, "");
