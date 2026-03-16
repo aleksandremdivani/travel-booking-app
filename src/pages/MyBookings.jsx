@@ -30,7 +30,7 @@ export const MyBookings = () => {
               >
                 <div className="sm:h-full h-5/10 w-full rounded-t-xl sm:w-33/100 sm:rounded-s-xl">
                   <img
-                    src={`https://picsum.photos/seed/${item.hotel.hotelId}/400/300.webp`}
+                    src={`https://picsum.photos/seed/${item.hotelData.hotel.hotelId}/400/300.webp`}
                     width="300"
                     height="200"
                     loading="lazy"
