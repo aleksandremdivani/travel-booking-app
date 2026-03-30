@@ -3,7 +3,8 @@ import { DestinationsContext } from "../context/DestinationsContext";
 import { Link } from "react-router-dom";
 
 export const ActivitiesPage = () => {
-  const { activities, destinationSearchRef, handleSearch } = useContext(DestinationsContext);
+  const { activities, destinationSearchRef, handleSearch } =
+    useContext(DestinationsContext);
   const truncateByWords = (text, maxLength = 150) => {
     if (!text) return "";
     const plainText = text.replace(/<[^>]+>/g, "");
@@ -35,18 +36,19 @@ export const ActivitiesPage = () => {
               Discover the best experiences at your destination
             </p>
           </div>
-          <div className="flex flex-row gap-4 px-4 max-w-8/10 w-full">
+          <div className="w-full px-5 sm:max-w-[80%] lg:max-w-[50%] flex flex-col sm:flex-row gap-4">
             <input
-              className="shadow-lg text-black p-4 flex-1 rounded-md bg-white outline-none"
+              className="text-black p-4 flex-1 rounded-md bg-white outline-none"
               type="search"
               placeholder="Search for a city..."
               ref={destinationSearchRef}
             />
+
             <button
               onClick={handleSearch}
-              className="shadow-lg active:opacity-70 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold"
+              className="active:opacity-70 px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold"
             >
-              search
+              Search
             </button>
           </div>
         </div>
