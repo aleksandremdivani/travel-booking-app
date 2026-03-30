@@ -9,7 +9,7 @@ export const WeatherPage = () => {
 
   return (
     <main
-      className="h-dvh flex flex-col justify-center weather-main"
+      className="min-h-dvh flex flex-col justify-center weather-main"
       style={{
         backgroundImage: `url(/assets/weather-img.jpg)`,
         backgroundSize: "cover",
