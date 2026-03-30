@@ -9,7 +9,7 @@ export const WeatherPage = () => {
 
   return (
     <main
-      className="min-h-dvh flex flex-col justify-center weather-main"
+      className="min-h-screen flex flex-col justify-center weather-main"
       style={{
         backgroundImage: `url(/assets/weather-img.jpg)`,
         backgroundSize: "cover",
@@ -18,7 +18,7 @@ export const WeatherPage = () => {
     >
       <section className="h-180 flex flex-col items-center gap-8">
         <h1 className="text-white text-[40px] font-bold">Weather Forecast</h1>
-        <div className="w-50/100 flex gap-4">
+        <div className="max-w-[50%] w-full flex gap-4">
           <input
             className="text-black p-4 flex-1 rounded-md bg-white outline-none"
             type="search"
