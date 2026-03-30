@@ -112,7 +112,7 @@ export const WeatherPage = () => {
 
   return (
     <main
-      className="min-h-screen flex flex-col justify-center weather-main px-4 sm:px-6"
+      className="min-h-screen flex flex-col justify-center weather-main py-5 px-4 sm:px-6"
       style={{
         backgroundImage: `url(/assets/weather-img.jpg)`,
         backgroundSize: "cover",
@@ -141,7 +141,6 @@ export const WeatherPage = () => {
           </button>
         </div>
 
-        {/* Content */}
         <div className="w-full flex flex-col items-center">
           <div className="w-full lg:w-[55%] flex flex-col gap-4">
 
@@ -155,19 +154,16 @@ export const WeatherPage = () => {
 
             {weather && (
               <>
-                {/* Main Card */}
                 <div
-                  className="w-full min-h-[300px] lg:h-[400px] rounded-2xl shadow-xl relative overflow-hidden"
+                  className="w-full min-h-[300px] lg:h-[400px] rounded-2xl shadow-xl flex overflow-hidden"
                   style={{
                     backgroundImage: `url(/assets/main-image.avif)`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
                 >
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/40"></div>
-
-                  <div className="relative z-10 w-full lg:w-[40%] bg-white/20 backdrop-blur-md rounded-2xl p-4 sm:p-6 h-full flex flex-col justify-between text-white">
+                
+                  <div className="w-full lg:w-[40%] bg-white/20 backdrop-blur-md rounded-2xl p-4 sm:p-6 flex flex-col justify-between text-white">
                     
                     <h2 className="text-[22px] sm:text-[28px] lg:text-[36px] font-bold">
                       {weather.name}, {weather.sys.country}
@@ -200,7 +196,7 @@ export const WeatherPage = () => {
                   />
                   <DetailsCard
                     label="Pressure"
-                    value={`${weather.main.pressure} hPa`}
+                    value={`${weather.main.pressure}`}
                   />
                   <DetailsCard
                     label="Visibility"
