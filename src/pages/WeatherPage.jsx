@@ -112,7 +112,7 @@ export const WeatherPage = () => {
 
   return (
     <main
-      className="min-h-screen flex flex-col justify-center weather-main py-5 px-4 sm:px-6"
+      className="min-h-screen flex flex-col justify-center weather-main py-10 sm:py-0 px-4 sm:px-6"
       style={{
         backgroundImage: `url(/assets/weather-img.jpg)`,
         backgroundSize: "cover",
@@ -124,7 +124,6 @@ export const WeatherPage = () => {
           Weather Forecast
         </h1>
 
-        {/* Search */}
         <div className="w-full sm:max-w-[80%] lg:max-w-[50%] flex flex-col sm:flex-row gap-4">
           <input
             className="text-black p-4 flex-1 rounded-md bg-white outline-none"
@@ -163,7 +162,7 @@ export const WeatherPage = () => {
                   }}
                 >
                 
-                  <div className="w-full lg:w-[40%] bg-white/20 backdrop-blur-md rounded-2xl p-4 sm:p-6 flex flex-col justify-between text-white">
+                  <div className="w-full md:w-5/10 lg:w-[40%] bg-white/20 backdrop-blur-md rounded-2xl p-4 sm:p-6 flex flex-col justify-between text-white">
                     
                     <h2 className="text-[22px] sm:text-[28px] lg:text-[36px] font-bold">
                       {weather.name}, {weather.sys.country}
