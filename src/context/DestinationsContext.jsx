@@ -189,6 +189,7 @@ const DestinationsProvider = ({ children }) => {
         );
 
         setHotelOffers(response.data.data);
+        console.log(response.data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -348,7 +349,7 @@ const DestinationsProvider = ({ children }) => {
       price: 499,
       image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
       shortDescription:
-        "A lively Spanish city on the Mediterranean, known for beaches and unique architecture.",
+        "vibrant coastal city full of art",
     },
     {
       id: "tokyo",
@@ -388,6 +389,7 @@ const DestinationsProvider = ({ children }) => {
         setHotelOffers,
         handleHotelSearch,
         isLoading,
+        setIsLoading,
         destinationCity,
         originSearchRef,
         activities,

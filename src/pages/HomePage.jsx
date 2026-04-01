@@ -14,6 +14,8 @@ const HomePage = () => {
     setDestinationCity,
     destinationSearchRef,
     handleHotelSearch,
+    setHotelOffers,
+    setIsLoading,
   } = useContext(DestinationsContext);
 
   return (
@@ -41,7 +43,7 @@ const HomePage = () => {
               <DateRangePicker />
             </div>
             <button
-              type="button" 
+              type="button"
               onClick={() => {
                 handleHotelSearch();
                 navigate("/booking");
@@ -79,6 +81,7 @@ const HomePage = () => {
                         onClick={() => {
                           setDestinationCity(item.name);
                           navigate("/hotels");
+                          setIsLoading(true);
                         }}
                         className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold"
                       >

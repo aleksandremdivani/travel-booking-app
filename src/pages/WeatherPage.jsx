@@ -162,7 +162,7 @@ export const WeatherPage = () => {
                   }}
                 >
                 
-                  <div className="w-full md:w-5/10 lg:w-[40%] bg-white/20 backdrop-blur-md rounded-2xl p-4 sm:p-6 flex flex-col justify-between text-white">
+                  <div className="w-full md:w-5/10 lg:w-[40%] bg-white/20 backdrop-blur-sm rounded-2xl p-4 sm:p-6 flex flex-col justify-between text-white">
                     
                     <h2 className="text-[22px] sm:text-[28px] lg:text-[36px] font-bold">
                       {weather.name}, {weather.sys.country}
