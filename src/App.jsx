@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { MainLayout } from "./layouts/MainLayout";
 import { ActivitiesLayout } from "./layouts/ActivitiesLayout";
+import SignUp from "./pages/SignUp";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const HotelsPage = lazy(() => import("./pages/HotelsPage").then(module => ({ default: module.HotelsPage })));
@@ -29,7 +30,7 @@ function App() {
           <Route element={<BookingPage />} path="/booking" />
           <Route element={<MyBookings />} path="/bookings" />
         </Route>
-        
+        <Route path="/signup" element={<SignUp />} />
         <Route element={<ActivitiesLayout />} path="/tours&activities/activity">
           <Route element={<ActivityDetailsPage />} path=":id" />
         </Route>
