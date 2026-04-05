@@ -1,6 +1,7 @@
+import { LogInIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const SignUp = () => {
+const LogIn = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left - Image with overlay */}
@@ -26,8 +27,6 @@ const SignUp = () => {
           </h2>
         </div>
       </div>
-
-      {/* Right - Form */}
       <div
         className="w-full md:w-1/2 flex flex-col justify-center px-12 py-16"
         style={{ backgroundColor: "#0f1923" }}
@@ -45,56 +44,24 @@ const SignUp = () => {
           className="text-white font-bold mb-1"
           style={{ fontSize: "2.4rem", fontFamily: "Georgia, serif" }}
         >
-          Create an account
+          Log In
         </h1>
         <p className="text-gray-500 text-sm mb-10">
-          Already have an account?{" "}
+          New here?
           <Link
-            to="/login"
+            to="/signup"
             className="text-blue-400 hover:text-blue-300 transition-colors"
           >
-            Log in
+            Sign Up
           </Link>
         </p>
 
         {/* Form */}
         <div className="flex flex-col gap-4">
           {/* Name row */}
-          <div className="flex gap-3">
-            <input
-              type="text"
-              placeholder="First Name"
-              className="w-1/2 px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
-              style={{
-                backgroundColor: "#1a2535",
-                border: "1px solid #1e2d3d",
-              }}
-              onFocus={(e) =>
-                (e.target.style.border = "1px solid #3b82f6")
-              }
-              onBlur={(e) =>
-                (e.target.style.border = "1px solid #1e2d3d")
-              }
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              className="w-1/2 px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
-              style={{
-                backgroundColor: "#1a2535",
-                border: "1px solid #1e2d3d",
-              }}
-              onFocus={(e) =>
-                (e.target.style.border = "1px solid #3b82f6")
-              }
-              onBlur={(e) =>
-                (e.target.style.border = "1px solid #1e2d3d")
-              }
-            />
-          </div>
           <input
             type="email"
-            placeholder="Email address"
+            placeholder="Email address or Username"
             className="px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
             style={{
               backgroundColor: "#1a2535",
@@ -110,7 +77,7 @@ const SignUp = () => {
 
           <input
             type="password"
-            placeholder="Create a password"
+            placeholder="Password"
             className="px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
             style={{
               backgroundColor: "#1a2535",
@@ -125,17 +92,7 @@ const SignUp = () => {
           />
 
           <div className="flex items-center gap-2 mt-1">
-            <input
-              type="checkbox"
-              id="terms"
-              className="w-4 h-4 accent-blue-500 rounded"
-            />
-            <label htmlFor="terms" className="text-gray-500 text-sm">
-              I agree to the{" "}
-              <span className="text-blue-400 hover:text-blue-300 cursor-pointer transition-colors">
-                Terms & Conditions
-              </span>
-            </label>
+            <Link className="text-blue-400 hover:text-blue-500 ">Forgot Password?</Link>
           </div>
 
           <button
@@ -144,7 +101,7 @@ const SignUp = () => {
               background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
             }}
           >
-            Create account
+            Log In
           </button>
 
           <div className="flex items-center gap-3 my-1">
@@ -175,4 +132,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default LogIn;
