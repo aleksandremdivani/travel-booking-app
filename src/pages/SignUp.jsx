@@ -92,6 +92,7 @@ const SignUp = () => {
               }
             />
           </div>
+          <input type="file" accept="image"/>
           <input
             type="email"
             placeholder="Email address"
