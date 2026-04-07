@@ -47,7 +47,7 @@ const LogIn = () => {
           Log In
         </h1>
         <p className="text-gray-500 text-sm mb-10">
-          New here?
+          New here? {""}
           <Link
             to="/signup"
             className="text-blue-400 hover:text-blue-300 transition-colors"

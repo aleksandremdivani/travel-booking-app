@@ -1,7 +1,9 @@
 import "../App.css";
 import { useContext } from "react";
+import React, { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import { DestinationsContext } from "../context/DestinationsContext";
-import DatePicker from "react-datepicker";
 import DateRangePicker from "../components/DateRangePicker";
 import { CalendarCheck, CircleDollarSign, CloudSun } from "lucide-react";
 import { FeaturesCard } from "../components/FeaturesCard";
@@ -17,7 +19,12 @@ const HomePage = () => {
     setHotelOffers,
     setIsLoading,
   } = useContext(DestinationsContext);
-
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // global duration in milliseconds
+      once: false, // whether animation should happen only once - while scrolling down
+    });
+  }, []);
   return (
     <>
       <main className="home-main h-140 justify-center flex items-center flex-col">
@@ -55,7 +62,7 @@ const HomePage = () => {
           </form>
         </div>
       </main>
-      <section className="py-4 bg-gray-100 flex flex-col items-center gap-5">
+      <section data-aos="fade-up" className="py-4 bg-gray-100 flex flex-col items-center gap-5">
         <div className="flex w-80/100 flex-col gap-y-2 items-center lg:items-start">
           <h2 className="text-[30px] font-bold">Top Destinations</h2>
           <ul className="flex flex-wrap justify-center gap-4 lg:justify-between w-full">
@@ -95,7 +102,7 @@ const HomePage = () => {
           </ul>
         </div>
       </section>
-      <section className="flex flex-col items-center pb-7 pt-4">
+      <section data-aos="fade-up" className="flex flex-col items-center pb-7 pt-4">
         <h2 className="text-[30px] font-bold">Why Choose Us</h2>
         <div className="w-90/100 h-auto flex lg:justify-between flex-wrap gap-4 justify-center">
           <FeaturesCard

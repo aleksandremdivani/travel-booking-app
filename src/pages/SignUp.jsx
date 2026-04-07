@@ -1,6 +1,23 @@
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const SignUp = () => {
+  const [passwordIsShown, setPasswordIsShown] = useState(false);
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    console.log(name, value);
+  };
   return (
     <div className="min-h-screen flex">
       {/* Left - Image with overlay */}
@@ -58,79 +75,81 @@ const SignUp = () => {
         </p>
 
         {/* Form */}
-        <div className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4">
           {/* Name row */}
           <div className="flex gap-3">
             <input
               type="text"
+              name="firstName"
+              value={form.firstName}
+              onChange={handleChange}
               placeholder="First Name"
               className="w-1/2 px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
               style={{
                 backgroundColor: "#1a2535",
                 border: "1px solid #1e2d3d",
               }}
-              onFocus={(e) =>
-                (e.target.style.border = "1px solid #3b82f6")
-              }
-              onBlur={(e) =>
-                (e.target.style.border = "1px solid #1e2d3d")
-              }
+              onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
+              onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
             />
             <input
               type="text"
+              onChange={handleChange}
+              name="lastName"
+              value={form.lastName}
               placeholder="Last Name"
               className="w-1/2 px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
               style={{
                 backgroundColor: "#1a2535",
                 border: "1px solid #1e2d3d",
               }}
-              onFocus={(e) =>
-                (e.target.style.border = "1px solid #3b82f6")
-              }
-              onBlur={(e) =>
-                (e.target.style.border = "1px solid #1e2d3d")
-              }
+              onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
+              onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
             />
           </div>
+
           <input
             type="email"
+            name="email"
+            onChange={handleChange}
+            value={form.email}
             placeholder="Email address"
             className="px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
             style={{
               backgroundColor: "#1a2535",
               border: "1px solid #1e2d3d",
             }}
-            onFocus={(e) =>
-              (e.target.style.border = "1px solid #3b82f6")
-            }
-            onBlur={(e) =>
-              (e.target.style.border = "1px solid #1e2d3d")
-            }
+            onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
+            onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
           />
-
-          <input
-            type="password"
-            placeholder="Create a password"
-            className="px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
-            style={{
-              backgroundColor: "#1a2535",
-              border: "1px solid #1e2d3d",
-            }}
-            onFocus={(e) =>
-              (e.target.style.border = "1px solid #3b82f6")
-            }
-            onBlur={(e) =>
-              (e.target.style.border = "1px solid #1e2d3d")
-            }
-          />
-
+          <div className="relative">
+            <input
+              type={passwordIsShown ? "password" : "text"}
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="Create a password"
+              className="px-4 w-full py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
+              style={{
+                backgroundColor: "#1a2535",
+                border: "1px solid #1e2d3d",
+              }}
+              onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
+              onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
+            />
+            <div
+              onClick={() => setPasswordIsShown((prev) => !prev)}
+              className="absolute top-[50%] right-[20px] text-white -translate-y-[50%]"
+            >
+              {passwordIsShown ? <Eye /> : <EyeOff />}
+            </div>
+          </div>
           <div className="flex items-center gap-2 mt-1">
             <input
               type="checkbox"
-              id="terms"
               className="w-4 h-4 accent-blue-500 rounded"
             />
-            <label htmlFor="terms" className="text-gray-500 text-sm">
+            <label className="text-gray-500 text-sm">
               I agree to the{" "}
               <span className="text-blue-400 hover:text-blue-300 cursor-pointer transition-colors">
                 Terms & Conditions
@@ -148,11 +167,17 @@ const SignUp = () => {
           </button>
 
           <div className="flex items-center gap-3 my-1">
-            <div className="flex-1 h-px" style={{ backgroundColor: "#1e2d3d" }} />
+            <div
+              className="flex-1 h-px"
+              style={{ backgroundColor: "#1e2d3d" }}
+            />
             <span className="text-gray-600 text-xs uppercase tracking-widest">
               or
             </span>
-            <div className="flex-1 h-px" style={{ backgroundColor: "#1e2d3d" }} />
+            <div
+              className="flex-1 h-px"
+              style={{ backgroundColor: "#1e2d3d" }}
+            />
           </div>
 
           <button
@@ -169,7 +194,7 @@ const SignUp = () => {
             />
             Continue with Google
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
