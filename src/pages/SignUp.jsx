@@ -1,4 +1,5 @@
 import { Eye, EyeOff } from "lucide-react";
+import { supabase } from "../supabase";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -16,7 +17,26 @@ const SignUp = () => {
       ...prev,
       [name]: value,
     }));
-    console.log(name, value);
+  };
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password,
+      options: {
+        data: {
+          firstName: form.firstName,
+          lastName: form.lastName,
+        },
+      },
+    });
+    setForm((prev) => ({
+      ...prev,
+      email: "",
+      password: "",
+    }));
+    console.log("submitted");
+    console.log(data, error);
   };
   return (
     <div className="min-h-screen flex">
@@ -75,7 +95,7 @@ const SignUp = () => {
         </p>
 
         {/* Form */}
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={onSubmit}>
           {/* Name row */}
           <div className="flex gap-3">
             <input
@@ -124,7 +144,7 @@ const SignUp = () => {
           />
           <div className="relative">
             <input
-              type={passwordIsShown ? "password" : "text"}
+              type={!passwordIsShown ? "password" : "text"}
               name="password"
               value={form.password}
               onChange={handleChange}
@@ -141,7 +161,7 @@ const SignUp = () => {
               onClick={() => setPasswordIsShown((prev) => !prev)}
               className="absolute top-[50%] right-[20px] text-white -translate-y-[50%]"
             >
-              {passwordIsShown ? <Eye /> : <EyeOff />}
+              {!passwordIsShown ? <Eye /> : <EyeOff />}
             </div>
           </div>
           <div className="flex items-center gap-2 mt-1">
@@ -162,6 +182,7 @@ const SignUp = () => {
             style={{
               background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
             }}
+            type="submit"
           >
             Create account
           </button>
