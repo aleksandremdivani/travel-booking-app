@@ -2,45 +2,64 @@ import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "../supabase";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import schema from "../validations/SignUpValidations";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const SignUp = () => {
+  // const [form, setForm] = useState({
+  //   firstName: "",
+  //   lastName: "",
+  //   email: "",
+  //   password: "",
+  // });
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setForm((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
   const [passwordIsShown, setPasswordIsShown] = useState(false);
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty, isValid, isSubmitting },
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onChange",
   });
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    const { data, error } = await supabase.auth.signUp({
-      email: form.email,
-      password: form.password,
+  const onSubmit = async (data) => {
+    const { data: authData, error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
       options: {
         data: {
-          firstName: form.firstName,
-          lastName: form.lastName,
+          firstName: data.firstName,
+          lastName: data.lastName,
         },
       },
     });
-    setForm((prev) => ({
-      ...prev,
+    reset({
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
-    }));
+    });
     console.log("submitted");
-    console.log(data, error);
+  };
+  const googleAuth = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:5173",
+      },
+    });
   };
   return (
     <div className="min-h-screen flex">
-      {/* Left - Image with overlay */}
       <div className="hidden md:flex w-1/2 relative overflow-hidden">
         <img
           src="/assets/main-image.avif"
@@ -64,12 +83,10 @@ const SignUp = () => {
         </div>
       </div>
 
-      {/* Right - Form */}
       <div
         className="w-full md:w-1/2 flex flex-col justify-center px-12 py-16"
-        style={{ backgroundColor: "#0f1923" }}
+        style={{ backgroundColor: "#1e2d3d" }}
       >
-        {/* Back link */}
         <Link
           to="/"
           className="text-gray-500 hover:text-white text-sm mb-12 flex items-center gap-2 transition-colors w-fit"
@@ -95,60 +112,76 @@ const SignUp = () => {
         </p>
 
         {/* Form */}
-        <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           {/* Name row */}
           <div className="flex gap-3">
-            <input
-              type="text"
-              name="firstName"
-              value={form.firstName}
-              onChange={handleChange}
-              placeholder="First Name"
-              className="w-1/2 px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
-              style={{
-                backgroundColor: "#1a2535",
-                border: "1px solid #1e2d3d",
-              }}
-              onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
-              onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
-            />
-            <input
-              type="text"
-              onChange={handleChange}
-              name="lastName"
-              value={form.lastName}
-              placeholder="Last Name"
-              className="w-1/2 px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
-              style={{
-                backgroundColor: "#1a2535",
-                border: "1px solid #1e2d3d",
-              }}
-              onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
-              onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
-            />
+            <div className="w-1/2">
+              <input
+                type="text"
+                {...register("firstName")}
+                placeholder="First Name *"
+                className="w-full px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
+                style={{
+                  backgroundColor: "#1a2535",
+                  border: "1px solid #1e2d3d",
+                }}
+                onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
+                onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
+              />
+              {errors.firstName && (
+                <span className="text-red-400 text-[12px]">
+                  {errors.firstName.message}
+                </span>
+              )}
+            </div>
+            <div className="w-1/2">
+              <input
+                type="text"
+                {...register("lastName")}
+                placeholder="Last Name *"
+                className="w-full px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
+                style={{
+                  backgroundColor: "#1a2535",
+                  border: "1px solid #1e2d3d",
+                }}
+                onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
+                onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
+              />
+              {errors.lastName && (
+                <span className="text-red-400 text-[12px] -top-2 right-3">
+                  {errors.lastName.message}
+                </span>
+              )}
+            </div>
           </div>
 
-          <input
-            type="email"
-            name="email"
-            onChange={handleChange}
-            value={form.email}
-            placeholder="Email address"
-            className="px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
-            style={{
-              backgroundColor: "#1a2535",
-              border: "1px solid #1e2d3d",
-            }}
-            onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
-            onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
-          />
+          {/* Email */}
+          <div className="relative">
+            <input
+              type="email"
+              {...register("email")}
+              placeholder="Email address *"
+              className="px-4 w-full py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
+              style={{
+                backgroundColor: "#1a2535",
+                border: "1px solid #1e2d3d",
+              }}
+              onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
+              onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
+            />
+            {errors.email && (
+              <span className="absolute px-3 bg-[#1e2d3d] rounded-xl text-red-400 text-[12px] -top-2 right-3">
+                {errors.email.message}
+              </span>
+            )}
+          </div>
+
+          {/* Password */}
           <div className="relative">
             <input
               type={!passwordIsShown ? "password" : "text"}
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Create a password"
+              {...register("password")}
+              placeholder="Create a password *"
               className="px-4 w-full py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
               style={{
                 backgroundColor: "#1a2535",
@@ -163,25 +196,37 @@ const SignUp = () => {
             >
               {!passwordIsShown ? <Eye /> : <EyeOff />}
             </div>
-          </div>
-          <div className="flex items-center gap-2 mt-1">
-            <input
-              type="checkbox"
-              className="w-4 h-4 accent-blue-500 rounded"
-            />
-            <label className="text-gray-500 text-sm">
-              I agree to the{" "}
-              <span className="text-blue-400 hover:text-blue-300 cursor-pointer transition-colors">
-                Terms & Conditions
+            {errors.password && (
+              <span className="absolute px-3 bg-[#1e2d3d] text-red-400 text-[12px] -top-2 right-3">
+                {errors.password.message}
               </span>
-            </label>
+            )}
+          </div>
+
+          {/* Terms */}
+          <div className="flex flex-col gap-1 mt-1">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                className="w-4 h-4 accent-blue-500 rounded"
+                {...register("terms")}
+              />
+              <p className="text-gray-500 text-sm">
+                I agree to the{" "}
+                <span className="text-blue-400 hover:text-blue-300 cursor-pointer transition-colors">
+                  Terms & Conditions
+                </span>
+              </p>
+            </div>
+            {errors.terms && (
+              <p className="text-red-400 text-[12px]">{errors.terms.message}</p>
+            )}
           </div>
 
           <button
-            className="w-full py-3 rounded-xl text-white font-semibold text-sm mt-1 transition-all hover:opacity-90 active:scale-95"
-            style={{
-              background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
-            }}
+            className="w-full py-3 rounded-xl text-white font-semibold text-sm mt-1 transition-all hover:opacity-90 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+            style={{ background: "linear-gradient(135deg, #2563eb, #1d4ed8)" }}
+            disabled={!isDirty || !isValid || isSubmitting}
             type="submit"
           >
             Create account
@@ -202,11 +247,9 @@ const SignUp = () => {
           </div>
 
           <button
+          onClick={googleAuth}
             className="w-full py-3 rounded-xl text-white text-sm font-medium flex items-center justify-center gap-3 transition-all hover:opacity-80"
-            style={{
-              backgroundColor: "#1a2535",
-              border: "1px solid #1e2d3d",
-            }}
+            style={{ backgroundColor: "#1a2535", border: "1px solid #1e2d3d" }}
           >
             <img
               src="https://www.google.com/favicon.ico"
