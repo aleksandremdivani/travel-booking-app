@@ -1,12 +1,14 @@
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "../supabase";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import schema from "../validations/SignUpValidations";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { AuthContext } from "../context/AuthContext";
 
 const SignUp = () => {
+  const { signUp } = useContext(AuthContext);
   // const [form, setForm] = useState({
   //   firstName: "",
   //   lastName: "",
@@ -32,16 +34,7 @@ const SignUp = () => {
     mode: "onChange",
   });
   const onSubmit = async (data) => {
-    const { data: authData, error } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-      options: {
-        data: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-        },
-      },
-    });
+    const { error } = await signUp(data.email, data.password, data.firstName, data.lastName);
     setAuthError(error);
     if (error) return;
     reset({
@@ -84,7 +77,6 @@ const SignUp = () => {
           </h2>
         </div>
       </div>
-
       <div
         className="w-full md:w-1/2 flex flex-col justify-center px-12 py-16"
         style={{ backgroundColor: "#1e2d3d" }}
