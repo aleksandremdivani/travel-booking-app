@@ -21,7 +21,7 @@ const SignUp = () => {
   //   }));
   // };
   const [passwordIsShown, setPasswordIsShown] = useState(false);
-
+  const [authError, setAuthError] = useState({});
   const {
     register,
     handleSubmit,
@@ -42,6 +42,8 @@ const SignUp = () => {
         },
       },
     });
+    setAuthError(error);
+    if (error) return;
     reset({
       firstName: "",
       lastName: "",
@@ -174,6 +176,11 @@ const SignUp = () => {
                 {errors.email.message}
               </span>
             )}
+            {authError && (
+              <p className="absolute px-3 bg-[#1e2d3d] rounded-xl text-red-400 text-[12px] -top-2 right-3">
+                {authError.message}
+              </p>
+            )}
           </div>
 
           {/* Password */}
@@ -247,7 +254,7 @@ const SignUp = () => {
           </div>
 
           <button
-          onClick={googleAuth}
+            onClick={googleAuth}
             className="w-full py-3 rounded-xl text-white text-sm font-medium flex items-center justify-center gap-3 transition-all hover:opacity-80"
             style={{ backgroundColor: "#1a2535", border: "1px solid #1e2d3d" }}
           >
