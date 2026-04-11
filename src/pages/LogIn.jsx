@@ -1,7 +1,33 @@
 import { LogInIcon } from "lucide-react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import schema from "../validations/LogInValidations";
 
 const LogIn = () => {
+  const { signIn } = useContext(AuthContext);
+  const [logInError, setLogInError] = useState({});
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty, isValid, isSubmitting },
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onChange",
+  });
+  const onSubmit = async (data) => {
+    const { error, data: authData } = await signIn(data.email, data.password);
+    console.log(authData, error);
+    setLogInError(error);
+    if (error) return;
+    reset({
+      email: "",
+      password: "",
+    });
+  };
   return (
     <div className="min-h-screen flex">
       {/* Left - Image with overlay */}
@@ -29,7 +55,7 @@ const LogIn = () => {
       </div>
       <div
         className="w-full md:w-1/2 flex flex-col justify-center px-12 py-16"
-        style={{ backgroundColor: "#0f1923" }}
+        style={{ backgroundColor: "#1e2d3d" }}
       >
         {/* Back link */}
         <Link
@@ -57,46 +83,61 @@ const LogIn = () => {
         </p>
 
         {/* Form */}
-        <div className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4">
           {/* Name row */}
-          <input
-            type="email"
-            placeholder="Email address or Username"
-            className="px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
-            style={{
-              backgroundColor: "#1a2535",
-              border: "1px solid #1e2d3d",
-            }}
-            onFocus={(e) =>
-              (e.target.style.border = "1px solid #3b82f6")
-            }
-            onBlur={(e) =>
-              (e.target.style.border = "1px solid #1e2d3d")
-            }
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            className="px-4 py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
-            style={{
-              backgroundColor: "#1a2535",
-              border: "1px solid #1e2d3d",
-            }}
-            onFocus={(e) =>
-              (e.target.style.border = "1px solid #3b82f6")
-            }
-            onBlur={(e) =>
-              (e.target.style.border = "1px solid #1e2d3d")
-            }
-          />
-
+          <div className="relative">
+            <input
+              type="email"
+              {...register("email", { onChange: () => setLogInError(null) })}
+              placeholder="Email address"
+              className="px-4 w-full py-3 rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
+              style={{
+                backgroundColor: "#1a2535",
+                border: "1px solid #1e2d3d",
+              }}
+              onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
+              onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
+            />
+            {errors.email && (
+              <span className="absolute px-3 bg-[#1e2d3d] rounded-xl text-red-400 text-[12px] -top-2 right-3">
+                {errors.email.message}
+              </span>
+            )}
+          </div>
+          <div className="relative">
+            <input
+              type="password"
+              {...register("password", { onChange: () => setLogInError(null) })}
+              placeholder="Password"
+              className="px-4 py-3 w-full rounded-xl text-white text-sm placeholder-gray-600 outline-none transition-all"
+              style={{
+                backgroundColor: "#1a2535",
+                border: "1px solid #1e2d3d",
+              }}
+              onFocus={(e) => (e.target.style.border = "1px solid #3b82f6")}
+              onBlur={(e) => (e.target.style.border = "1px solid #1e2d3d")}
+            />
+            {errors.password && (
+              <span className="absolute px-3 bg-[#1e2d3d] rounded-xl text-red-400 text-[12px] -top-2 right-3">
+                {errors.password.message}
+              </span>
+            )}
+          </div>
+          {logInError && (
+            <div className="mx-auto text-red-500">
+              <p>{logInError.message}</p>
+            </div>
+          )}
           <div className="flex items-center gap-2 mt-1">
-            <Link className="text-blue-400 hover:text-blue-500 ">Forgot Password?</Link>
+            <Link className="text-blue-400 hover:text-blue-500 ">
+              Forgot Password?
+            </Link>
           </div>
 
           <button
-            className="w-full py-3 rounded-xl text-white font-semibold text-sm mt-1 transition-all hover:opacity-90 active:scale-95"
+            onClick={handleSubmit(onSubmit)}
+            disabled={!isDirty || !isValid || isSubmitting} 
+            className="w-full py-3 disabled:opacity-30 disabled:pointer-events-none rounded-xl text-white font-semibold text-sm mt-1 transition-all hover:opacity-90 active:scale-95"
             style={{
               background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
             }}
@@ -105,11 +146,17 @@ const LogIn = () => {
           </button>
 
           <div className="flex items-center gap-3 my-1">
-            <div className="flex-1 h-px" style={{ backgroundColor: "#1e2d3d" }} />
+            <div
+              className="flex-1 h-px"
+              style={{ backgroundColor: "#1e2d3d" }}
+            />
             <span className="text-gray-600 text-xs uppercase tracking-widest">
               or
             </span>
-            <div className="flex-1 h-px" style={{ backgroundColor: "#1e2d3d" }} />
+            <div
+              className="flex-1 h-px"
+              style={{ backgroundColor: "#1e2d3d" }}
+            />
           </div>
 
           <button
@@ -126,7 +173,7 @@ const LogIn = () => {
             />
             Continue with Google
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );

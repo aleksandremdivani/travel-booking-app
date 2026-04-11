@@ -6,19 +6,27 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const signUp = async (email, password, firstName, lastName) => {
     const { error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
+      email,
+      password,
       options: {
         data: {
-          firstName: firstName,
-          lastName: lastName,
+          firstName,
+          lastName,
         },
       },
     });
     return { error };
   };
+  const signIn = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    console.log(data, error);
+    return { data, error };
+  };
   return (
-    <AuthContext.Provider value={{ signUp }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ signUp, signIn }}>{children}</AuthContext.Provider>
   );
 };
 
