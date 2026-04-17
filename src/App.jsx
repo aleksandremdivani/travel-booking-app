@@ -1,9 +1,10 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useContext } from "react";
 import { Route, Routes } from "react-router-dom";
 import { MainLayout } from "./layouts/MainLayout";
 import { ActivitiesLayout } from "./layouts/ActivitiesLayout";
 import SignUp from "./pages/SignUp";
 import LogIn from "./pages/LogIn";
+import { AuthContext } from "./context/AuthContext";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const HotelsPage = lazy(() =>
@@ -44,6 +45,7 @@ const PageLoader = () => (
 );
 
 function App() {
+  const { user } = useContext(AuthContext);
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
@@ -55,8 +57,12 @@ function App() {
           <Route element={<BookingPage />} path="/booking" />
           <Route element={<MyBookings />} path="/bookings" />
         </Route>
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<LogIn />} />
+        {!user && (
+          <>
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<LogIn />} />
+          </>
+        )}
         <Route element={<ActivitiesLayout />} path="/tours&activities/activity">
           <Route element={<ActivityDetailsPage />} path=":id" />
         </Route>

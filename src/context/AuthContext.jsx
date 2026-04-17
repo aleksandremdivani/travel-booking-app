@@ -1,10 +1,12 @@
 import { createContext, useEffect, useState } from "react";
 import { supabase } from "../supabase";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   const signUp = async (email, password, firstName, lastName) => {
     const { error } = await supabase.auth.signUp({
@@ -25,9 +27,12 @@ export const AuthProvider = ({ children }) => {
     } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user);
       console.log("user:", user);
+      navigate("/");
     });
     return () => subscription.unsubscribe();
   }, []);
+  console.log("user:", user);
+
   const signIn = async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -37,7 +42,7 @@ export const AuthProvider = ({ children }) => {
     return { data, error };
   };
   return (
-    <AuthContext.Provider value={{ signUp, signIn, user }}>
+    <AuthContext.Provider value={{ signUp,setUser, signIn, user }}>
       {children}
     </AuthContext.Provider>
   );
