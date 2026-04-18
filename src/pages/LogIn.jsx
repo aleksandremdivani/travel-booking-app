@@ -1,14 +1,15 @@
 import { LogInIcon } from "lucide-react";
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import schema from "../validations/LogInValidations";
 
 const LogIn = () => {
-  const { signIn } = useContext(AuthContext);
+  const { signIn, googleAuth } = useContext(AuthContext);
   const [logInError, setLogInError] = useState({});
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -20,13 +21,13 @@ const LogIn = () => {
   });
   const onSubmit = async (data) => {
     const { error, data: authData } = await signIn(data.email, data.password);
-    console.log(authData, error);
     setLogInError(error);
     if (error) return;
     reset({
       email: "",
       password: "",
     });
+    navigate("/");
   };
   return (
     <div className="min-h-screen flex">
@@ -83,7 +84,7 @@ const LogIn = () => {
         </p>
 
         {/* Form */}
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           {/* Name row */}
           <div className="relative">
             <input
@@ -135,8 +136,7 @@ const LogIn = () => {
           </div>
 
           <button
-            onClick={handleSubmit(onSubmit)}
-            disabled={!isDirty || !isValid || isSubmitting} 
+            disabled={!isDirty || !isValid || isSubmitting}
             className="w-full py-3 disabled:opacity-30 disabled:pointer-events-none rounded-xl text-white font-semibold text-sm mt-1 transition-all hover:opacity-90 active:scale-95"
             style={{
               background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
@@ -160,6 +160,7 @@ const LogIn = () => {
           </div>
 
           <button
+            onClick={googleAuth}
             className="w-full py-3 rounded-xl text-white text-sm font-medium flex items-center justify-center gap-3 transition-all hover:opacity-80"
             style={{
               backgroundColor: "#1a2535",

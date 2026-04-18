@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const Header = () => {
   const location = useLocation();
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, signOut } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
 
   const isTransparent =
@@ -99,6 +99,7 @@ const Header = () => {
                   alt="user"
                   referrerPolicy="no-referrer"
                 />
+                <button onClick={signOut}>log out</button>
               </div>
             )}
           </div>

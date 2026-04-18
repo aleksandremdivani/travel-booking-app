@@ -1,14 +1,15 @@
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "../supabase";
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import schema from "../validations/SignUpValidations";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AuthContext } from "../context/AuthContext";
 
 const SignUp = () => {
-  const { signUp } = useContext(AuthContext);
+  const { signUp, googleAuth } = useContext(AuthContext);
+  const navigate = useNavigate();
   // const [form, setForm] = useState({
   //   firstName: "",
   //   lastName: "",
@@ -43,16 +44,10 @@ const SignUp = () => {
       email: "",
       password: "",
     });
+    navigate("/");
     console.log("submitted");
   };
-  const googleAuth = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: "http://localhost:5173",
-      },
-    });
-  };
+  
   return (
     <div className="min-h-screen flex">
       <div className="hidden md:flex w-1/2 relative overflow-hidden">

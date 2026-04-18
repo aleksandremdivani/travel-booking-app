@@ -6,7 +6,6 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
 
   const signUp = async (email, password, firstName, lastName) => {
     const { error } = await supabase.auth.signUp({
@@ -21,13 +20,20 @@ export const AuthProvider = ({ children }) => {
     });
     return { error };
   };
+  const googleAuth = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "http://localhost:5173",
+      },
+    });
+  };
   useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user);
       console.log("user:", user);
-      navigate("/");
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -41,8 +47,12 @@ export const AuthProvider = ({ children }) => {
     console.log(data, error);
     return { data, error };
   };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+  };
   return (
-    <AuthContext.Provider value={{ signUp,setUser, signIn, user }}>
+    <AuthContext.Provider value={{ signUp, setUser, signIn, user, signOut, googleAuth }}>
       {children}
     </AuthContext.Provider>
   );
