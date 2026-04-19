@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import "../App.css";
 import { NavItem } from "./NavItem";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Menu, User2, UserCheck } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 
@@ -9,7 +9,17 @@ const Header = () => {
   const location = useLocation();
   const { user, setUser, signOut } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest(".user-dropdown")) {
+        setOpen(false);
+      }
+    };
 
+    if (open) document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [open]);
   const isTransparent =
     location.pathname === "/weather" ||
     location.pathname === "/tours&activities";
@@ -87,11 +97,12 @@ const Header = () => {
             {/* {user && <button onClick={() => setUser(null)}>click me</button>} */}
 
             {user && (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 relative user-dropdown">
                 <p className="capitalize">
                   {user.user_metadata.firstName || user.user_metadata.name}
                 </p>
                 <img
+                  onclick={() => setOpen((prev) => !prev)}
                   className="w-10 rounded-full border-2 border-gray-300"
                   src={
                     user.user_metadata.avatar_url || "/assets/user-icon2.svg"
@@ -99,7 +110,14 @@ const Header = () => {
                   alt="user"
                   referrerPolicy="no-referrer"
                 />
-                <button onClick={signOut}>log out</button>
+                {open && (
+                  <button
+                    className="bg-gray-200 px-2 text-sm absolute -bottom-4 -right-14"
+                    onClick={signOut}
+                  >
+                    log out
+                  </button>
+                )}
               </div>
             )}
           </div>
