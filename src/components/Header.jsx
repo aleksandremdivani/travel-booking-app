@@ -94,7 +94,6 @@ const Header = () => {
                 </Link>
               </>
             )}
-            {/* {user && <button onClick={() => setUser(null)}>click me</button>} */}
 
             {user && (
               <div className="flex items-center gap-3 relative user-dropdown">
@@ -102,7 +101,7 @@ const Header = () => {
                   {user.user_metadata.firstName || user.user_metadata.name}
                 </p>
                 <img
-                  onclick={() => setOpen((prev) => !prev)}
+                  onClick={() => setOpen((prev) => !prev)}
                   className="w-10 rounded-full border-2 border-gray-300"
                   src={
                     user.user_metadata.avatar_url || "/assets/user-icon2.svg"
@@ -112,10 +111,10 @@ const Header = () => {
                 />
                 {open && (
                   <button
-                    className="bg-gray-200 px-2 text-sm absolute -bottom-4 -right-14"
+                    className="bg-gray-100 hover:bg-gray-200 rounded-sm px-2 text-sm absolute -bottom-4 -right-14"
                     onClick={signOut}
                   >
-                    log out
+                    Log out
                   </button>
                 )}
               </div>
@@ -174,16 +173,45 @@ const Header = () => {
               </ul>
             </nav>
             <div className="flex flex-col gap-3 w-full px-4 sm:hidden">
-              <Link to="/login">
-                <button className="w-full px-4 py-2 rounded-lg font-semibold border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-300">
-                  Login
-                </button>
-              </Link>
-              <Link to="/signup">
-                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">
-                  Sign Up
-                </button>
-              </Link>
+              {!user && (
+                <>
+                  <Link to="/login">
+                    <button className="w-full px-4 py-2 rounded-lg font-semibold border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors duration-300">
+                      Login
+                    </button>
+                  </Link>
+                  <Link to="/signup">
+                    <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold">
+                      Sign Up
+                    </button>
+                  </Link>
+                </>
+              )}
+              {user && (
+                <div className="flex items-center gap-3 relative user-dropdown">
+                  <img
+                    onClick={() => setOpen((prev) => !prev)}
+                    className="w-10 rounded-full border-2 border-gray-300"
+                    src={
+                      user.user_metadata.avatar_url || "/assets/user-icon2.svg"
+                    }
+                    alt="user"
+                    referrerPolicy="no-referrer"
+                  />
+                  <p className="capitalize">
+                    {user.user_metadata.firstName || user.user_metadata.name}
+                  </p>
+
+                  {open && (
+                    <button
+                      className="bg-gray-100 hover:bg-gray-200 rounded-sm px-2 text-sm absolute -bottom-4 left-8"
+                      onClick={signOut}
+                    >
+                      Log out
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </aside>
