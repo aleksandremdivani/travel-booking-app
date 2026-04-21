@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "https://travel-booking-app-vert.vercel.app/",
+        redirectTo: `${window.location.origin}/`,
       },
     });
   };
@@ -52,7 +52,9 @@ export const AuthProvider = ({ children }) => {
     await supabase.auth.signOut();
   };
   return (
-    <AuthContext.Provider value={{ signUp, setUser, signIn, user, signOut, googleAuth }}>
+    <AuthContext.Provider
+      value={{ signUp, setUser, signIn, user, signOut, googleAuth }}
+    >
       {children}
     </AuthContext.Provider>
   );
