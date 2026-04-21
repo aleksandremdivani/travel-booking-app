@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "http://localhost:5173",
+        redirectTo: "https://travel-booking-app-vert.vercel.app/",
       },
     });
   };

@@ -190,8 +190,9 @@ const Header = () => {
               {user && (
                 <div className="flex items-center gap-3 relative user-dropdown">
                   <img
-                    onClick={() => setOpen((prev) => !prev)}
                     className="w-10 rounded-full border-2 border-gray-300"
+                    onMouseEnter={() => setOpen(true)}
+                    onClick={() => setOpen((prev) => !prev)}
                     src={
                       user.user_metadata.avatar_url || "/assets/user-icon2.svg"
                     }
