@@ -19,7 +19,7 @@ const DestinationsProvider = ({ children }) => {
   const [startDate, endDate] = dateRange;
 
   const destinationSearchRef = useRef();
-  const originSearchRef = useRef();
+  const placeSearchRef = useRef();
 
   const [bookings, setBookings] = useState(() => {
     const savedBookings = localStorage.getItem("bookings");
@@ -38,6 +38,7 @@ const DestinationsProvider = ({ children }) => {
 
   const [hotelsList, SetHotelsList] = useState([]);
   const [hotelOffers, setHotelOffers] = useState(null);
+  const [places, setPlaces] = useState([]);
 
   const [selectedHotels, setSelectedHotels] = useState(() => {
     const saved = localStorage.getItem("selectedHotels");
@@ -70,7 +71,7 @@ const DestinationsProvider = ({ children }) => {
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
             },
-          }
+          },
         );
 
         setAccessToken(response.data.access_token);
@@ -81,21 +82,43 @@ const DestinationsProvider = ({ children }) => {
 
     getAccessToken();
   }, []);
+  useEffect(() => {
+    const fetchPlaces = async (place) => {
+      try {
+        const response = await axios.get(
+          "https://api.liteapi.travel/v3.0/data/places",
+          {
+            params: {
+              textQuery: place,
+              type: "locality,hotel",
+            },
+            headers: {
+              "X-API-Key": import.meta.env.VITE_LITEAPI_KEY,
+            },
+          },
+        );
+            console.log("places:",response.data);
 
-  const searchCity = async (city) => {
-    const response = await axios.get(
-      "https://test.api.amadeus.com/v1/reference-data/locations/cities",
-      {
-        params: { keyword: city },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+      } catch (error) {
+        console.log(error);
       }
-    );
+    };
+    fetchPlaces("paris");
+  }, []);
+  // const searchCity = async (city) => {
+  //   const response = await axios.get(
+  //     "https://test.api.amadeus.com/v1/reference-data/locations/cities",
+  //     {
+  //       params: { keyword: city },
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     }
+  //   );
 
-    return response.data.data[0].iataCode;
-  };
-
+  //   return response.data.data[0].iataCode;
+  // };
+  //https://api.liteapi.travel/v3.0/data/places
   const formatDate = (date) => {
     if (!date) return null;
 
@@ -107,98 +130,98 @@ const DestinationsProvider = ({ children }) => {
   };
 
   useEffect(() => {
-  if (!weather || !accessToken || activities.length) return;
+    if (!weather || !accessToken || activities.length) return;
 
-  const fetchActivities = async () => {
-    try {
-      const lat = weather.coord.lat;
-      const lon = weather.coord.lon;
-
-      const response = await axios.get(
-        "https://test.api.amadeus.com/v1/shopping/activities",
-        {
-          params: {
-            latitude: lat,
-            longitude: lon,
-          },
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      setActivities(response.data.data);
-    } catch (error) {
-      console.log(error.response?.data);
-    }
-  };
-
-  fetchActivities();
-}, [weather, accessToken]);
-
-  useEffect(() => {
-    if (!destinationCity || !accessToken) return;
-
-    const fetchHotelsList = async () => {
+    const fetchActivities = async () => {
       try {
-        const cityCode = await searchCity(destinationCity);
+        const lat = weather.coord.lat;
+        const lon = weather.coord.lon;
 
         const response = await axios.get(
-          "https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city",
+          "https://test.api.amadeus.com/v1/shopping/activities",
           {
-            params: { cityCode },
+            params: {
+              latitude: lat,
+              longitude: lon,
+            },
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
-          }
+          },
         );
 
-        SetHotelsList(response.data.data);
+        setActivities(response.data.data);
       } catch (error) {
         console.log(error.response?.data);
       }
     };
 
-    fetchHotelsList();
-  }, [destinationCity, accessToken]);
+    fetchActivities();
+  }, [weather, accessToken]);
 
-  useEffect(() => {
-    const fetchHotelOffers = async () => {
-      try {
-        if (!accessToken || !hotelsList.length) return;
+  // useEffect(() => {
+  //   if (!destinationCity || !accessToken) return;
 
-        const hotelIds = hotelsList
-          .slice(0, 30)
-          .map((item) => item.hotelId)
-          .join(",");
+  //   const fetchHotelsList = async () => {
+  //     try {
+  //       const cityCode = await searchCity(destinationCity);
 
-        const response = await axios.get(
-          "https://test.api.amadeus.com/v3/shopping/hotel-offers",
-          {
-            params: {
-              hotelIds,
-              checkInDate: formatDate(startDate),
-              checkOutDate: formatDate(endDate),
-              includeClosed: false,
-              currency: "USD",
-            },
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+  //       const response = await axios.get(
+  //         "https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city",
+  //         {
+  //           params: { cityCode },
+  //           headers: {
+  //             Authorization: `Bearer ${accessToken}`,
+  //           },
+  //         }
+  //       );
 
-        setHotelOffers(response.data.data);
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  //       SetHotelsList(response.data.data);
+  //     } catch (error) {
+  //       console.log(error.response?.data);
+  //     }
+  //   };
 
-    fetchHotelOffers();
-  }, [hotelsList, startDate, endDate, accessToken]);
+  //   fetchHotelsList();
+  // }, [destinationCity, accessToken]);
+
+  // useEffect(() => {
+  //   const fetchHotelOffers = async () => {
+  //     try {
+  //       if (!accessToken || !hotelsList.length) return;
+
+  //       const hotelIds = hotelsList
+  //         .slice(0, 30)
+  //         .map((item) => item.hotelId)
+  //         .join(",");
+
+  //       const response = await axios.get(
+  //         "https://test.api.amadeus.com/v3/shopping/hotel-offers",
+  //         {
+  //           params: {
+  //             hotelIds,
+  //             checkInDate: formatDate(startDate),
+  //             checkOutDate: formatDate(endDate),
+  //             includeClosed: false,
+  //             currency: "USD",
+  //           },
+  //           headers: {
+  //             Authorization: `Bearer ${accessToken}`,
+  //           },
+  //         }
+  //       );
+
+  //       setHotelOffers(response.data.data);
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchHotelOffers();
+  // }, [hotelsList, startDate, endDate, accessToken]);
 
   const calculateTotalStayPrice = (checkIn, checkOut, nightlyPrice) => {
     if (!checkIn || !checkOut) return 0;
@@ -255,7 +278,7 @@ const DestinationsProvider = ({ children }) => {
         (item) =>
           item.hotel.hotelId === hotel.hotel.hotelId &&
           item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
-          item.offers[0].checkOutDate === hotel.offers[0].checkOutDate
+          item.offers[0].checkOutDate === hotel.offers[0].checkOutDate,
       );
 
       if (isAlreadySelected) {
@@ -265,7 +288,7 @@ const DestinationsProvider = ({ children }) => {
               item.hotel.hotelId === hotel.hotel.hotelId &&
               item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
               item.offers[0].checkOutDate === hotel.offers[0].checkOutDate
-            )
+            ),
         );
       }
 
@@ -277,9 +300,7 @@ const DestinationsProvider = ({ children }) => {
     const hotelCurrency = hotel.offers[0].price.currency;
 
     const rateData =
-      hotelOffers?.dictionaries?.currencyConversionLookupRates?.[
-        hotelCurrency
-      ];
+      hotelOffers?.dictionaries?.currencyConversionLookupRates?.[hotelCurrency];
 
     return rateData ? Number(rateData.rate) : 1;
   };
@@ -287,13 +308,13 @@ const DestinationsProvider = ({ children }) => {
   const totalPrice = selectedHotels.reduce((sum, item) => {
     const nightlyPriceUSD = Math.round(
       (Number(item.offers[0].price.base) ||
-        Number(item.offers[0].price.total)) * getConvertRate(item)
+        Number(item.offers[0].price.total)) * getConvertRate(item),
     );
 
     const stayTotalPrice = calculateTotalStayPrice(
       item.offers[0].checkInDate,
       item.offers[0].checkOutDate,
-      nightlyPriceUSD
+      nightlyPriceUSD,
     );
 
     return sum + stayTotalPrice;
@@ -314,7 +335,7 @@ const DestinationsProvider = ({ children }) => {
               appid: VITE_WEATHER_API_KEY,
               units: "metric",
             },
-          }
+          },
         );
 
         setWeather(response.data);
@@ -348,8 +369,7 @@ const DestinationsProvider = ({ children }) => {
       airportCode: "DPS",
       price: 499,
       image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-      shortDescription:
-        "vibrant coastal city full of art",
+      shortDescription: "vibrant coastal city full of art",
     },
     {
       id: "tokyo",
@@ -391,7 +411,6 @@ const DestinationsProvider = ({ children }) => {
         isLoading,
         setIsLoading,
         destinationCity,
-        originSearchRef,
         activities,
         accessToken,
         handleHotelSelect,
