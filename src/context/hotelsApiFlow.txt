@@ -1,0 +1,34 @@
+# hotelsApiFlow.txt — LiteAPI (search-only flow)
+
+1) Places Autocomplete (user typing)
+- Purpose: Get location suggestions as the user types (debounce).
+- Endpoint: GET /v3.0/data/places
+- Params:
+  - textQuery=<input> (required)
+  - type="locality,airport,hotel" (optional)
+  - language="en" (optional)
+
+2) Selected Place → Hotels List
+- Purpose: After user selects a suggestion, load hotels for that place (metadata + hotelIds).
+- Endpoint: GET /v3.0/data/hotels
+- Params:
+  - placeId=<selected placeId> (common)
+  - limit, offset (optional)
+  - filters (optional): starRating, facilityIds, chainIds, hotelTypeIds, minRating, etc.
+
+3) Rates (availability + prices for dates/guests)
+- Purpose: Show live prices + available offers for hotels.
+- Endpoint: POST /v3.0/hotels/rates
+- Body (core):
+  - checkin="YYYY-MM-DD", checkout="YYYY-MM-DD"
+  - currency="USD"
+  - guestNationality="US"
+  - occupancies=[{ adults: 2, children: 0 }]
+  - hotelIds=[...] (from step 2) OR another supported location input
+
+4) Hotel Details (when user opens a hotel)
+- Purpose: Full hotel page content (description, amenities, images, location, etc.).
+- Endpoint: GET /v3.0/data/hotel
+- Params:
+  - hotelId=<lp...>
+  - language="en" (optional)
