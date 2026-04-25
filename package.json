@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@supabase/supabase-js": "^2.101.1",
     "@tailwindcss/vite": "^4.2.1",
+    "@uidotdev/usehooks": "^2.4.1",
     "aos": "^2.3.4",
     "axios": "^1.13.6",
     "embla-carousel-autoplay": "^8.6.0",

@@ -1,3 +1,4 @@
+import { useDebounce } from "@uidotdev/usehooks";
 import axios from "axios";
 import { createContext, useEffect, useRef, useState } from "react";
 
@@ -19,7 +20,6 @@ const DestinationsProvider = ({ children }) => {
   const [startDate, endDate] = dateRange;
 
   const destinationSearchRef = useRef();
-  const placeSearchRef = useRef();
 
   const [bookings, setBookings] = useState(() => {
     const savedBookings = localStorage.getItem("bookings");
@@ -36,9 +36,8 @@ const DestinationsProvider = ({ children }) => {
   const [weather, setWeather] = useState(null);
   const [activities, setActivities] = useState([]);
 
-  const [hotelsList, SetHotelsList] = useState([]);
+  // const [hotelsList, SetHotelsList] = useState([]);
   const [hotelOffers, setHotelOffers] = useState(null);
-  const [places, setPlaces] = useState([]);
 
   const [selectedHotels, setSelectedHotels] = useState(() => {
     const saved = localStorage.getItem("selectedHotels");
@@ -82,8 +81,13 @@ const DestinationsProvider = ({ children }) => {
 
     getAccessToken();
   }, []);
+  // const placeSearchRef = useRef();
+  const [query, setQuery] = useState("");
+  const debouncedValue = useDebounce(query, 800);
+  const [places, setPlaces] = useState([]);
   useEffect(() => {
     const fetchPlaces = async (place) => {
+      if (!debouncedValue.trim()) return;
       try {
         const response = await axios.get(
           "https://api.liteapi.travel/v3.0/data/places",
@@ -97,14 +101,64 @@ const DestinationsProvider = ({ children }) => {
             },
           },
         );
-            console.log("places:",response.data);
-
+        console.log("places:", response.data);
+        setPlaces(response.data);
       } catch (error) {
         console.log(error);
       }
     };
     fetchPlaces("paris");
-  }, []);
+  }, [debouncedValue]);
+  const [selectedPlace, setSelectedPlace] = "";
+  const [hotelsList, SetHotelsList] = useState([]);
+  useEffect(() => {
+    const fetchHotelsList = async () => {
+      try {
+        const response = await axios.get(
+          "https://api.liteapi.travel/v3.0/data/hotels",
+          {
+            params: {
+              placeId: "ChIJD7fiBh9u5kcRYJSMaMOCCwQ",
+            },
+            headers: {
+              "X-API-Key": import.meta.env.VITE_LITEAPI_KEY,
+            },
+          },
+        );
+        console.log(response.data);
+        SetHotelsList(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchHotelsList();
+  }, [selectedPlace]);
+  useEffect(() => {
+    const fetchHotelRates = async () => {
+      try {
+        const response = await axios.post(
+          "https://api.liteapi.travel/v3.0/hotels/rates",
+          {
+            hotelIds: hotelsList.hotelIds,
+            occupancies: [{ rooms: 1, adults: 2 }],
+            currency: "USD",
+            guestNationality: "US",
+            checkin: "2026-07-01",
+            checkout: "2026-07-03",
+          },
+          {
+            headers: {
+              "X-API-Key": import.meta.env.VITE_LITEAPI_KEY,
+            },
+          },
+        );
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchHotelRates();
+  }, [hotelsList]);
   // const searchCity = async (city) => {
   //   const response = await axios.get(
   //     "https://test.api.amadeus.com/v1/reference-data/locations/cities",
