@@ -44,7 +44,6 @@ const Header = () => {
             Traveloop Bookings
           </h2>
         </div>
-
         <div className="flex items-center gap-16">
           <nav className="header-nav hidden lg:block">
             <ul className="flex items-center gap-4">

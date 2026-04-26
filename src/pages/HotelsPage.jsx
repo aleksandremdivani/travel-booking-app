@@ -1,11 +1,10 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { DestinationsContext } from "../context/DestinationsContext";
 import DateRangePicker from "../components/DateRangePicker";
-import { ArrowBigRightIcon, Loader } from "lucide-react";
+import { ArrowBigRightIcon } from "lucide-react";
 import { HotelBtn } from "../components/HotelBtn";
 import { Link } from "react-router-dom";
 
-// 1. Simple Skeleton Component to stop Layout Shift
 const HotelSkeleton = () => (
   <div className="rounded-xl bg-gray-100 animate-pulse w-full h-[400px] sm:h-[200px] flex flex-col sm:flex-row border border-gray-200">
     <div className="sm:h-full h-1/2 w-full sm:w-1/3 bg-gray-200" />
@@ -28,18 +27,51 @@ export const HotelsPage = () => {
     destinationCity,
     selectedHotels,
     getConvertRate,
+    selectedPlace,
+    setSelectedPlace,
+    query,
+    setQuery,
+    places,
   } = useContext(DestinationsContext);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <main className="flex flex-col h-auto gap-3 mb-5">
       <div className="w-full flex justify-center bg-gray-200 py-5">
         <div className="gap-3 rounded-xl w-full max-w-95/100 justify-center flex flex-col md:flex-row items-center">
-          <input
-            type="search"
-            ref={destinationSearchRef}
-            placeholder="Choose destination"
-            className="dest-search w-6/10 lg:w-4/10 h-12 px-12 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-700 bg-white"
-          />
+          
+          <div className="relative w-6/10 lg:w-4/10">
+            <input
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setIsOpen(true);
+              }}
+              type="search"
+              placeholder="Choose destination"
+              className="dest-search w-full h-12 px-12 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-700 bg-white"
+            />
+            {isOpen && places.length > 0 && (
+              <div className="absolute z-10 bg-white border border-gray-200 rounded-xl shadow-lg w-full mt-1 max-h-60 overflow-y-auto">
+                {places.map((place) => (
+                  <div
+                    key={place.placeId}
+                    onClick={() => {
+                      setSelectedPlace(place);
+                      setQuery(place.displayName);
+                      setIsOpen(false);
+                    }}
+                    className="px-4 py-3 hover:bg-gray-100 cursor-pointer text-gray-700"
+                  >
+                    <p className="font-medium">{place.displayName}</p>
+                    <p className="text-sm text-gray-400">{place.formattedAddress}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="w-6/10 lg:w-4/10">
             <DateRangePicker />
           </div>
@@ -85,8 +117,13 @@ export const HotelsPage = () => {
 
           {hotelOffers && !isLoading &&
             hotelOffers.map((item) => {
-              const isSelected = selectedHotels.find((i) => i.hotel.hotelId === item.hotel.hotelId);
-              const nightlyUSD = Math.round((item.offers[0].price.base || item.offers[0].price.total) * getConvertRate(item));
+              const isSelected = selectedHotels.find(
+                (i) => i.hotel.hotelId === item.hotel.hotelId,
+              );
+              const nightlyUSD = Math.round(
+                (item.offers[0].price.base || item.offers[0].price.total) *
+                  getConvertRate(item),
+              );
 
               return (
                 <div
@@ -106,13 +143,31 @@ export const HotelsPage = () => {
                   <div className="pt-3 ps-5 w-full sm:max-w-67/100 flex flex-col justify-between p-4">
                     <h2 className="font-bold text-[18px]">{item.hotel.name}</h2>
                     <div>
-                      <p className="text-gray-600">📍 {destinationCity.toUpperCase()}, {weather?.sys?.country || ""}</p>
-                      <p className="text-sm text-gray-400">{item.offers[0].checkInDate} to {item.offers[0].checkOutDate}</p>
+                      <p className="text-gray-600">
+                        📍 {destinationCity.toUpperCase()},{" "}
+                        {weather?.sys?.country || ""}
+                      </p>
+                      <p className="text-sm text-gray-400">
+                        {item.offers[0].checkInDate} to {item.offers[0].checkOutDate}
+                      </p>
                     </div>
                     <div className="flex justify-between w-full items-center pe-4 pb-2">
                       <div>
-                        <p className="text-sm text-gray-500">From <span className="text-lg font-bold text-black">${nightlyUSD}</span>/night</p>
-                        <p className="text-blue-600 font-bold">Total: ${calculateTotalStayPrice(item.offers[0].checkInDate, item.offers[0].checkOutDate, nightlyUSD)} USD</p>
+                        <p className="text-sm text-gray-500">
+                          From{" "}
+                          <span className="text-lg font-bold text-black">
+                            ${nightlyUSD}
+                          </span>
+                          /night
+                        </p>
+                        <p className="text-blue-600 font-bold">
+                          Total: ${calculateTotalStayPrice(
+                            item.offers[0].checkInDate,
+                            item.offers[0].checkOutDate,
+                            nightlyUSD,
+                          )}{" "}
+                          USD
+                        </p>
                       </div>
                       <HotelBtn isSelected={isSelected} item={item} />
                     </div>

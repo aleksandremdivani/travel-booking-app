@@ -83,11 +83,14 @@ const DestinationsProvider = ({ children }) => {
   }, []);
   // const placeSearchRef = useRef();
   const [query, setQuery] = useState("");
-  const debouncedValue = useDebounce(query, 800);
+  const debouncedValue = useDebounce(query, 600);
   const [places, setPlaces] = useState([]);
   useEffect(() => {
+    if (!debouncedValue.trim()) {
+      setPlaces([]);
+      return;
+    }
     const fetchPlaces = async (place) => {
-      if (!debouncedValue.trim()) return;
       try {
         const response = await axios.get(
           "https://api.liteapi.travel/v3.0/data/places",
@@ -102,12 +105,12 @@ const DestinationsProvider = ({ children }) => {
           },
         );
         console.log("places:", response.data);
-        setPlaces(response.data);
+        setPlaces(response.data.data);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchPlaces("paris");
+    fetchPlaces(debouncedValue);
   }, [debouncedValue]);
   const [selectedPlace, setSelectedPlace] = "";
   const [hotelsList, SetHotelsList] = useState([]);
@@ -134,6 +137,7 @@ const DestinationsProvider = ({ children }) => {
     fetchHotelsList();
   }, [selectedPlace]);
   useEffect(() => {
+    if (!hotelsList?.hotelIds?.length) return;
     const fetchHotelRates = async () => {
       try {
         const response = await axios.post(
@@ -476,6 +480,11 @@ const DestinationsProvider = ({ children }) => {
         calculateTotalStayPrice,
         getConvertRate,
         setBookings,
+        selectedPlace,
+        setSelectedPlace,
+        query,
+        setQuery,
+        places,
       }}
     >
       {children}
