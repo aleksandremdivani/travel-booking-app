@@ -5,6 +5,9 @@ import { createContext, useEffect, useRef, useState } from "react";
 const DestinationsContext = createContext();
 
 const DestinationsProvider = ({ children }) => {
+  // ============================================================
+  // 1. GLOBAL / SHARED
+  // ============================================================
   const [dateRange, setDateRange] = useState(() => {
     const savedDates = localStorage.getItem("dateRange");
     if (!savedDates) return [null, null];
@@ -32,383 +35,6 @@ const DestinationsProvider = ({ children }) => {
   const [destinationCity, setDestinationCity] = useState(() => {
     return localStorage.getItem("destinationCity") || "";
   });
-
-  const [weather, setWeather] = useState(null);
-  const [activities, setActivities] = useState([]);
-
-  // const [hotelsList, SetHotelsList] = useState([]);
-  const [hotelOffers, setHotelOffers] = useState(null);
-
-  const [selectedHotels, setSelectedHotels] = useState(() => {
-    const saved = localStorage.getItem("selectedHotels");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("dateRange", JSON.stringify(dateRange));
-  }, [dateRange]);
-
-  useEffect(() => {
-    localStorage.setItem("destinationCity", destinationCity);
-  }, [destinationCity]);
-
-  useEffect(() => {
-    localStorage.setItem("selectedHotels", JSON.stringify(selectedHotels));
-  }, [selectedHotels]);
-
-  useEffect(() => {
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-  }, [bookings]);
-
-  useEffect(() => {
-    const getAccessToken = async () => {
-      try {
-        const response = await axios.post(
-          "https://test.api.amadeus.com/v1/security/oauth2/token",
-          `grant_type=client_credentials&client_id=${import.meta.env.VITE_AMADEUS_API_KEY}&client_secret=${import.meta.env.VITE_AMADEUS_API_SECRET}`,
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          },
-        );
-
-        setAccessToken(response.data.access_token);
-      } catch (error) {
-        console.log(error.response?.data);
-      }
-    };
-
-    getAccessToken();
-  }, []);
-  // const placeSearchRef = useRef();
-  const [query, setQuery] = useState("");
-  const debouncedValue = useDebounce(query, 600);
-  const [places, setPlaces] = useState([]);
-  useEffect(() => {
-    if (!debouncedValue.trim()) {
-      setPlaces([]);
-      return;
-    }
-    const fetchPlaces = async (place) => {
-      try {
-        const response = await axios.get(
-          "https://api.liteapi.travel/v3.0/data/places",
-          {
-            params: {
-              textQuery: place,
-              type: "locality,hotel",
-            },
-            headers: {
-              "X-API-Key": import.meta.env.VITE_LITEAPI_KEY,
-            },
-          },
-        );
-        console.log("places:", response.data);
-        setPlaces(response.data.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchPlaces(debouncedValue);
-  }, [debouncedValue]);
-  const [selectedPlace, setSelectedPlace] = "";
-  const [hotelsList, SetHotelsList] = useState([]);
-  useEffect(() => {
-    const fetchHotelsList = async () => {
-      try {
-        const response = await axios.get(
-          "https://api.liteapi.travel/v3.0/data/hotels",
-          {
-            params: {
-              placeId: "ChIJD7fiBh9u5kcRYJSMaMOCCwQ",
-            },
-            headers: {
-              "X-API-Key": import.meta.env.VITE_LITEAPI_KEY,
-            },
-          },
-        );
-        console.log(response.data);
-        SetHotelsList(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchHotelsList();
-  }, [selectedPlace]);
-  useEffect(() => {
-    if (!hotelsList?.hotelIds?.length) return;
-    const fetchHotelRates = async () => {
-      try {
-        const response = await axios.post(
-          "https://api.liteapi.travel/v3.0/hotels/rates",
-          {
-            hotelIds: hotelsList.hotelIds,
-            occupancies: [{ rooms: 1, adults: 2 }],
-            currency: "USD",
-            guestNationality: "US",
-            checkin: "2026-07-01",
-            checkout: "2026-07-03",
-          },
-          {
-            headers: {
-              "X-API-Key": import.meta.env.VITE_LITEAPI_KEY,
-            },
-          },
-        );
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchHotelRates();
-  }, [hotelsList]);
-  // const searchCity = async (city) => {
-  //   const response = await axios.get(
-  //     "https://test.api.amadeus.com/v1/reference-data/locations/cities",
-  //     {
-  //       params: { keyword: city },
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     }
-  //   );
-
-  //   return response.data.data[0].iataCode;
-  // };
-  //https://api.liteapi.travel/v3.0/data/places
-  const formatDate = (date) => {
-    if (!date) return null;
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  };
-
-  useEffect(() => {
-    if (!weather || !accessToken || activities.length) return;
-
-    const fetchActivities = async () => {
-      try {
-        const lat = weather.coord.lat;
-        const lon = weather.coord.lon;
-
-        const response = await axios.get(
-          "https://test.api.amadeus.com/v1/shopping/activities",
-          {
-            params: {
-              latitude: lat,
-              longitude: lon,
-            },
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          },
-        );
-
-        setActivities(response.data.data);
-      } catch (error) {
-        console.log(error.response?.data);
-      }
-    };
-
-    fetchActivities();
-  }, [weather, accessToken]);
-
-  // useEffect(() => {
-  //   if (!destinationCity || !accessToken) return;
-
-  //   const fetchHotelsList = async () => {
-  //     try {
-  //       const cityCode = await searchCity(destinationCity);
-
-  //       const response = await axios.get(
-  //         "https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city",
-  //         {
-  //           params: { cityCode },
-  //           headers: {
-  //             Authorization: `Bearer ${accessToken}`,
-  //           },
-  //         }
-  //       );
-
-  //       SetHotelsList(response.data.data);
-  //     } catch (error) {
-  //       console.log(error.response?.data);
-  //     }
-  //   };
-
-  //   fetchHotelsList();
-  // }, [destinationCity, accessToken]);
-
-  // useEffect(() => {
-  //   const fetchHotelOffers = async () => {
-  //     try {
-  //       if (!accessToken || !hotelsList.length) return;
-
-  //       const hotelIds = hotelsList
-  //         .slice(0, 30)
-  //         .map((item) => item.hotelId)
-  //         .join(",");
-
-  //       const response = await axios.get(
-  //         "https://test.api.amadeus.com/v3/shopping/hotel-offers",
-  //         {
-  //           params: {
-  //             hotelIds,
-  //             checkInDate: formatDate(startDate),
-  //             checkOutDate: formatDate(endDate),
-  //             includeClosed: false,
-  //             currency: "USD",
-  //           },
-  //           headers: {
-  //             Authorization: `Bearer ${accessToken}`,
-  //           },
-  //         }
-  //       );
-
-  //       setHotelOffers(response.data.data);
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchHotelOffers();
-  // }, [hotelsList, startDate, endDate, accessToken]);
-
-  const calculateTotalStayPrice = (checkIn, checkOut, nightlyPrice) => {
-    if (!checkIn || !checkOut) return 0;
-
-    const start = new Date(checkIn);
-    const end = new Date(checkOut);
-
-    const diffInMs = end - start;
-    const nights = Math.max(1, Math.round(diffInMs / (1000 * 60 * 60 * 24)));
-
-    return nights * nightlyPrice;
-  };
-
-  const handleHotelSearch = () => {
-    if (destinationSearchRef.current.value.trim() === "") return;
-
-    setDestinationCity(destinationSearchRef.current.value.trim());
-    destinationSearchRef.current.value = "";
-
-    setIsLoading(true);
-    setHotelOffers([]);
-    setBooked(false);
-  };
-
-  const handleBooking = () => {
-    if (selectedHotels.length === 0) return;
-
-    const newBooking = selectedHotels.map((item) => {
-      return {
-        hotelData: item,
-        id: `TRIP-${Date.now()}-${Math.random()
-          .toString(36)
-          .toUpperCase()
-          .substring(2, 7)}`,
-        city: destinationCity,
-        country: weather?.sys?.country || "",
-      };
-    });
-
-    setBookings((prev) => [...prev, ...newBooking]);
-
-    setSelectedHotels([]);
-    setDestinationCity("");
-    setActivities([]);
-    setWeather(null);
-    setBooked(true);
-    setHotelOffers([]);
-    setDateRange([null, null]);
-  };
-
-  const handleHotelSelect = (hotel) => {
-    setSelectedHotels((prev) => {
-      const isAlreadySelected = prev.find(
-        (item) =>
-          item.hotel.hotelId === hotel.hotel.hotelId &&
-          item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
-          item.offers[0].checkOutDate === hotel.offers[0].checkOutDate,
-      );
-
-      if (isAlreadySelected) {
-        return prev.filter(
-          (item) =>
-            !(
-              item.hotel.hotelId === hotel.hotel.hotelId &&
-              item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
-              item.offers[0].checkOutDate === hotel.offers[0].checkOutDate
-            ),
-        );
-      }
-
-      return [...prev, hotel];
-    });
-  };
-
-  const getConvertRate = (hotel) => {
-    const hotelCurrency = hotel.offers[0].price.currency;
-
-    const rateData =
-      hotelOffers?.dictionaries?.currencyConversionLookupRates?.[hotelCurrency];
-
-    return rateData ? Number(rateData.rate) : 1;
-  };
-
-  const totalPrice = selectedHotels.reduce((sum, item) => {
-    const nightlyPriceUSD = Math.round(
-      (Number(item.offers[0].price.base) ||
-        Number(item.offers[0].price.total)) * getConvertRate(item),
-    );
-
-    const stayTotalPrice = calculateTotalStayPrice(
-      item.offers[0].checkInDate,
-      item.offers[0].checkOutDate,
-      nightlyPriceUSD,
-    );
-
-    return sum + stayTotalPrice;
-  }, 0);
-
-  useEffect(() => {
-    const fetchWeatherData = async (city) => {
-      const { VITE_WEATHER_API_KEY } = import.meta.env;
-
-      try {
-        if (!city) return;
-
-        const response = await axios.get(
-          "https://api.openweathermap.org/data/2.5/weather",
-          {
-            params: {
-              q: city,
-              appid: VITE_WEATHER_API_KEY,
-              units: "metric",
-            },
-          },
-        );
-
-        setWeather(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchWeatherData(destinationCity);
-  }, [destinationCity]);
-
-  const handleSearch = () => {
-    setDestinationCity(destinationSearchRef.current.value.trim());
-    destinationSearchRef.current.value = "";
-  };
 
   const destinations = [
     {
@@ -449,6 +75,324 @@ const DestinationsProvider = ({ children }) => {
     },
   ];
 
+  const formatDate = (date) => {
+    if (!date) return null;
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleSearch = () => {
+    setDestinationCity(destinationSearchRef.current.value.trim());
+    destinationSearchRef.current.value = "";
+  };
+
+  const handleHotelSearch = () => {
+    if (destinationSearchRef.current.value.trim() === "") return;
+
+    setDestinationCity(destinationSearchRef.current.value.trim());
+    destinationSearchRef.current.value = "";
+
+    setIsLoading(true);
+    setHotelOffers([]);
+    setBooked(false);
+  };
+
+  const handleBooking = () => {
+    if (selectedHotels.length === 0) return;
+
+    const newBooking = selectedHotels.map((item) => {
+      return {
+        hotelData: item,
+        id: `TRIP-${Date.now()}-${Math.random()
+          .toString(36)
+          .toUpperCase()
+          .substring(2, 7)}`,
+        city: destinationCity,
+        country: weather?.sys?.country || "",
+      };
+    });
+
+    setBookings((prev) => [...prev, ...newBooking]);
+
+    setSelectedHotels([]);
+    setDestinationCity("");
+    setActivities([]);
+    setWeather(null);
+    setBooked(true);
+    setHotelOffers([]);
+    setDateRange([null, null]);
+  };
+
+  const calculateTotalStayPrice = (checkIn, checkOut, nightlyPrice) => {
+    if (!checkIn || !checkOut) return 0;
+
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+
+    const diffInMs = end - start;
+    const nights = Math.max(1, Math.round(diffInMs / (1000 * 60 * 60 * 24)));
+
+    return nights * nightlyPrice;
+  };
+
+  const getConvertRate = (hotel) => {
+    const hotelCurrency = hotel.offers[0].price.currency;
+
+    const rateData =
+      hotelOffers?.dictionaries?.currencyConversionLookupRates?.[hotelCurrency];
+
+    return rateData ? Number(rateData.rate) : 1;
+  };
+
+  // ============================================================
+  // 2. PLACES
+  // ============================================================
+  // const placeSearchRef = useRef();
+  const [query, setQuery] = useState("");
+  const debouncedValue = useDebounce(query, 600);
+  const [places, setPlaces] = useState([]);
+
+  useEffect(() => {
+    if (!debouncedValue.trim()) {
+      setPlaces([]);
+      return;
+    }
+    const fetchPlaces = async (place) => {
+      try {
+        const response = await axios.get(
+          "https://api.liteapi.travel/v3.0/data/places",
+          {
+            params: {
+              textQuery: place,
+              type: "locality,hotel",
+            },
+            headers: {
+              "X-API-Key": import.meta.env.VITE_LITEAPI_KEY,
+            },
+          },
+        );
+        console.log("places:", response.data);
+        setPlaces(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchPlaces(debouncedValue);
+  }, [debouncedValue]);
+
+  // ============================================================
+  // 3. HOTELS
+  // ============================================================
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [hotelsList, SetHotelsList] = useState([]);
+
+  useEffect(() => {
+    if (!selectedPlace) return;
+    const fetchHotelsList = async () => {
+      try {
+        const response = await axios.get(
+          "https://api.liteapi.travel/v3.0/data/hotels",
+          {
+            params: {
+              placeId: selectedPlace.placeId,
+            },
+            headers: {
+              "X-API-Key": import.meta.env.VITE_LITEAPI_KEY,
+            },
+          },
+        );
+        console.log(response.data);
+        SetHotelsList(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchHotelsList();
+  }, [selectedPlace]);
+  console.log(selectedPlace);
+  // const [hotelsList, SetHotelsList] = useState([]);
+  const [hotelOffers, setHotelOffers] = useState(null);
+
+  const [selectedHotels, setSelectedHotels] = useState(() => {
+    const saved = localStorage.getItem("selectedHotels");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const totalPrice = selectedHotels.reduce((sum, item) => {
+    const nightlyPriceUSD = Math.round(
+      (Number(item.offers[0].price.base) ||
+        Number(item.offers[0].price.total)) * getConvertRate(item),
+    );
+
+    const stayTotalPrice = calculateTotalStayPrice(
+      item.offers[0].checkInDate,
+      item.offers[0].checkOutDate,
+      nightlyPriceUSD,
+    );
+
+    return sum + stayTotalPrice;
+  }, 0);
+
+  const handleHotelSelect = (hotel) => {
+    setSelectedHotels((prev) => {
+      const isAlreadySelected = prev.find(
+        (item) =>
+          item.hotel.hotelId === hotel.hotel.hotelId &&
+          item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
+          item.offers[0].checkOutDate === hotel.offers[0].checkOutDate,
+      );
+
+      if (isAlreadySelected) {
+        return prev.filter(
+          (item) =>
+            !(
+              item.hotel.hotelId === hotel.hotel.hotelId &&
+              item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
+              item.offers[0].checkOutDate === hotel.offers[0].checkOutDate
+            ),
+        );
+      }
+
+      return [...prev, hotel];
+    });
+  };
+  const [hotelRates, setHotelRates] = useState([]);
+  useEffect(() => {
+    if (!hotelsList?.hotelIds?.length) return;
+    const fetchHotelRates = async () => {
+      try {
+        const response = await axios.post(
+          "https://api.liteapi.travel/v3.0/hotels/rates",
+          {
+            hotelIds: hotelsList.hotelIds,
+            occupancies: [{ rooms: 1, adults: 2 }],
+            currency: "USD",
+            guestNationality: "US",
+            checkin: "2026-07-01",
+            checkout: "2026-07-03",
+          },
+          {
+            headers: {
+              "X-API-Key": import.meta.env.VITE_LITEAPI_KEY,
+            },
+          },
+        );
+        console.log(response.data);
+        setHotelRates(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchHotelRates();
+  }, [hotelsList]);
+  // ============================================================
+  // 4. WEATHER
+  // ============================================================
+  const [weather, setWeather] = useState(null);
+
+  useEffect(() => {
+    const fetchWeatherData = async (city) => {
+      const { VITE_WEATHER_API_KEY } = import.meta.env;
+      if (!city) return;
+      try {
+        const response = await axios.get(
+          "https://api.openweathermap.org/data/2.5/weather",
+          {
+            params: {
+              q: city,
+              appid: VITE_WEATHER_API_KEY,
+              units: "metric",
+            },
+          },
+        );
+
+        setWeather(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchWeatherData(destinationCity);
+  }, [destinationCity]);
+  // ============================================================
+  // 5. ACTIVITIES
+  // ============================================================
+  const [activities, setActivities] = useState([]);
+
+  useEffect(() => {
+    const getAccessToken = async () => {
+      try {
+        const response = await axios.post(
+          "https://test.api.amadeus.com/v1/security/oauth2/token",
+          `grant_type=client_credentials&client_id=${import.meta.env.VITE_AMADEUS_API_KEY}&client_secret=${import.meta.env.VITE_AMADEUS_API_SECRET}`,
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          },
+        );
+
+        setAccessToken(response.data.access_token);
+      } catch (error) {
+        console.log(error.response?.data);
+      }
+    };
+
+    getAccessToken();
+  }, []);
+
+  useEffect(() => {
+    if (!weather || !accessToken || activities.length) return;
+
+    const fetchActivities = async () => {
+      try {
+        const lat = weather.coord.lat;
+        const lon = weather.coord.lon;
+
+        const response = await axios.get(
+          "https://test.api.amadeus.com/v1/shopping/activities",
+          {
+            params: {
+              latitude: lat,
+              longitude: lon,
+            },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+
+        setActivities(response.data.data);
+      } catch (error) {
+        console.log(error.response?.data);
+      }
+    };
+
+    fetchActivities();
+  }, [weather, accessToken]);
+
+  useEffect(() => {
+    localStorage.setItem("dateRange", JSON.stringify(dateRange));
+  }, [dateRange]);
+
+  useEffect(() => {
+    localStorage.setItem("destinationCity", destinationCity);
+  }, [destinationCity]);
+
+  useEffect(() => {
+    localStorage.setItem("selectedHotels", JSON.stringify(selectedHotels));
+  }, [selectedHotels]);
+
+  useEffect(() => {
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+  }, [bookings]);
+  // ============================================================
+  // PROVIDER
+  // ============================================================
   return (
     <DestinationsContext.Provider
       value={{

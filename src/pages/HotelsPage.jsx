@@ -40,7 +40,6 @@ export const HotelsPage = () => {
     <main className="flex flex-col h-auto gap-3 mb-5">
       <div className="w-full flex justify-center bg-gray-200 py-5">
         <div className="gap-3 rounded-xl w-full max-w-95/100 justify-center flex flex-col md:flex-row items-center">
-          
           <div className="relative w-6/10 lg:w-4/10">
             <input
               value={query}
@@ -65,13 +64,14 @@ export const HotelsPage = () => {
                     className="px-4 py-3 hover:bg-gray-100 cursor-pointer text-gray-700"
                   >
                     <p className="font-medium">{place.displayName}</p>
-                    <p className="text-sm text-gray-400">{place.formattedAddress}</p>
+                    <p className="text-sm text-gray-400">
+                      {place.formattedAddress}
+                    </p>
                   </div>
                 ))}
               </div>
             )}
           </div>
-
           <div className="w-6/10 lg:w-4/10">
             <DateRangePicker />
           </div>
@@ -87,10 +87,15 @@ export const HotelsPage = () => {
       <div className="h-auto w-full flex items-center flex-col gap-6">
         <div className="border-b w-full p-4 flex justify-between min-h-[60px]">
           {hotelOffers && !isLoading && destinationCity && (
-            <p>Showing {hotelOffers.length} hotels in {destinationCity}</p>
+            <p>
+              Showing {hotelOffers.length} hotels in {destinationCity}
+            </p>
           )}
           {selectedHotels.length !== 0 && (
-            <Link to="/booking" className="text-blue-500 flex items-center gap-2 font-semibold">
+            <Link
+              to="/booking"
+              className="text-blue-500 flex items-center gap-2 font-semibold"
+            >
               Go to Booking <ArrowBigRightIcon />
             </Link>
           )}
@@ -115,7 +120,8 @@ export const HotelsPage = () => {
             <p className="text-center text-gray-500">No hotels found</p>
           )}
 
-          {hotelOffers && !isLoading &&
+          {hotelOffers &&
+            !isLoading &&
             hotelOffers.map((item) => {
               const isSelected = selectedHotels.find(
                 (i) => i.hotel.hotelId === item.hotel.hotelId,
@@ -148,7 +154,8 @@ export const HotelsPage = () => {
                         {weather?.sys?.country || ""}
                       </p>
                       <p className="text-sm text-gray-400">
-                        {item.offers[0].checkInDate} to {item.offers[0].checkOutDate}
+                        {item.offers[0].checkInDate} to{" "}
+                        {item.offers[0].checkOutDate}
                       </p>
                     </div>
                     <div className="flex justify-between w-full items-center pe-4 pb-2">
@@ -161,7 +168,8 @@ export const HotelsPage = () => {
                           /night
                         </p>
                         <p className="text-blue-600 font-bold">
-                          Total: ${calculateTotalStayPrice(
+                          Total: $
+                          {calculateTotalStayPrice(
                             item.offers[0].checkInDate,
                             item.offers[0].checkOutDate,
                             nightlyUSD,
