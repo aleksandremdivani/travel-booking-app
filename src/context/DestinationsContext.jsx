@@ -90,16 +90,16 @@ const DestinationsProvider = ({ children }) => {
     destinationSearchRef.current.value = "";
   };
 
-  const handleHotelSearch = () => {
-    if (destinationSearchRef.current.value.trim() === "") return;
+  // const handleHotelSearch = () => {
+  //   if (destinationSearchRef.current.value.trim() === "") return;
 
-    setDestinationCity(destinationSearchRef.current.value.trim());
-    destinationSearchRef.current.value = "";
+  //   setDestinationCity(destinationSearchRef.current.value.trim());
+  //   destinationSearchRef.current.value = "";
 
-    setIsLoading(true);
-    setHotelOffers([]);
-    setBooked(false);
-  };
+  //   setIsLoading(true);
+  //   setHotelOffers([]);
+  //   setBooked(false);
+  // };
 
   const handleBooking = () => {
     if (selectedHotels.length === 0) return;
@@ -409,7 +409,7 @@ const DestinationsProvider = ({ children }) => {
         hotelsList,
         hotelOffers,
         setHotelOffers,
-        handleHotelSearch,
+        // handleHotelSearch,
         isLoading,
         setIsLoading,
         destinationCity,

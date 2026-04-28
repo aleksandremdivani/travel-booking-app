@@ -11,7 +11,7 @@ const DateRangePicker = () => {
       selectsRange
       startDate={startDate}
       endDate={endDate}
-      // onChange={(update) => setDateRange(update)}
+      onChange={(update) => setDateRange(update)}
       dateFormat="yyyy-MM-dd"
       isClearable
       minDate={Date()}

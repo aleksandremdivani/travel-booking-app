@@ -76,7 +76,6 @@ export const HotelsPage = () => {
             <DateRangePicker />
           </div>
           <button
-            onClick={handleHotelSearch}
             className="px-7 h-12 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300 font-semibold"
           >
             Search
