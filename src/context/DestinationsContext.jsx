@@ -1,6 +1,6 @@
 import { useDebounce } from "@uidotdev/usehooks";
 import axios from "axios";
-import { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useMemo, useRef, useState } from "react";
 
 const DestinationsContext = createContext();
 
@@ -18,9 +18,9 @@ const DestinationsProvider = ({ children }) => {
       parsed[1] ? new Date(parsed[1]) : null,
     ];
   });
-
-  const [accessToken, setAccessToken] = useState(null);
   const [startDate, endDate] = dateRange;
+  const [dates, setDates] = useState([null, null]);
+  const [accessToken, setAccessToken] = useState(null);
 
   const destinationSearchRef = useRef();
 
@@ -262,7 +262,9 @@ const DestinationsProvider = ({ children }) => {
   };
   const [hotelRates, setHotelRates] = useState([]);
   useEffect(() => {
-    if (!hotelsList?.hotelIds?.length) return;
+    if (!hotelsList?.hotelIds?.length || !startDate || !endDate) return;
+    const checkInDate = formatDate(startDate);
+    const checkOutDate = formatDate(endDate);
     const fetchHotelRates = async () => {
       try {
         const response = await axios.post(
@@ -272,8 +274,8 @@ const DestinationsProvider = ({ children }) => {
             occupancies: [{ rooms: 1, adults: 2 }],
             currency: "USD",
             guestNationality: "US",
-            checkin: "2026-07-01",
-            checkout: "2026-07-03",
+            checkin: checkInDate,
+            checkout: checkOutDate,
           },
           {
             headers: {
@@ -289,6 +291,15 @@ const DestinationsProvider = ({ children }) => {
     };
     fetchHotelRates();
   }, [hotelsList]);
+  const mergedHotels = useMemo(() => {
+    const hotelData = hotelRates.map((rate) => {
+      return {
+        ...rate,
+        hotel: hotelsList.data.find((h) => h.id === rate.hotelId),
+      };
+    });
+    return hotelData;
+  }, [hotelRates, hotelsList]);
   // ============================================================
   // 4. WEATHER
   // ============================================================
@@ -429,6 +440,11 @@ const DestinationsProvider = ({ children }) => {
         query,
         setQuery,
         places,
+        dates,
+        setDates,
+        hotelsList,
+        hotelRates,
+        mergedHotels,
       }}
     >
       {children}
