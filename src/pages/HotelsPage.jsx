@@ -244,18 +244,19 @@ export const HotelsPage = () => {
   const selectedPlaceRef = useRef();
 
   const handleSearch = () => {
-    if (!selectedPlaceRef.current || !dates[0] || !dates[1]) return;
+    if (!selectedPlaceRef.current) return;
     setDateRange(dates);
     setSelectedPlace(selectedPlaceRef.current);
     selectedPlaceRef.current = null;
     setDates([null, null]);
     setQuery("");
-    
   };
 
   const getCheapestPrice = (roomTypes) => {
     if (!roomTypes?.length) return null;
-    return Math.min(...roomTypes.map((r) => r.offerRetailRate?.amount).filter(Boolean));
+    return Math.min(
+      ...roomTypes.map((r) => r.offerRetailRate?.amount).filter(Boolean),
+    );
   };
 
   const getStars = (count) => "★".repeat(count) + "☆".repeat(5 - count);
@@ -266,10 +267,17 @@ export const HotelsPage = () => {
       <div className="w-full bg-white border-b border-gray-200 py-4 px-4 flex justify-center">
         <div className="flex gap-3 w-full max-w-4xl flex-col md:flex-row items-center">
           <div className="relative w-full md:flex-2">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
+            <img
+              src="/assets/location-pin.svg"
+              className="absolute top-1/2 -translate-y-1/2 w-9 left-[3px]"
+            />
+            {/* 🔍</span> */}
             <input
               value={query}
-              onChange={(e) => { setQuery(e.target.value); setIsOpen(true); }}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setIsOpen(true);
+              }}
               type="search"
               placeholder="Choose destination"
               className="w-full h-11 pl-9 pr-4 border border-gray-300 rounded-xl text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition"
@@ -286,8 +294,12 @@ export const HotelsPage = () => {
                     }}
                     className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0"
                   >
-                    <p className="text-sm font-medium text-gray-800">{place.displayName}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{place.formattedAddress}</p>
+                    <p className="text-sm font-medium text-gray-800">
+                      {place.displayName}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {place.formattedAddress}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -309,8 +321,12 @@ export const HotelsPage = () => {
       <div className="px-4 py-3 border-b border-gray-200 bg-white flex justify-between items-center">
         {mergedHotels?.length > 0 && !isLoading && (
           <p className="text-sm text-gray-500">
-            Showing <span className="font-medium text-gray-800">{mergedHotels.length} hotels</span>
-            {hotelsList?.place?.displayName && ` in ${hotelsList.place.displayName}`}
+            Showing{" "}
+            <span className="font-medium text-gray-800">
+              {mergedHotels.length} hotels
+            </span>
+            {hotelsList?.place?.displayName &&
+              ` in ${hotelsList.place.displayName}`}
           </p>
         )}
       </div>
@@ -332,75 +348,87 @@ export const HotelsPage = () => {
           </div>
         )}
 
-        {!isLoading && mergedHotels?.map((item) => {
-          const cheapest = getCheapestPrice(item.roomTypes);
-          const cheapestRoom = item.roomTypes?.find(
-            (r) => r.offerRetailRate?.amount === cheapest
-          );
-          const boardName = cheapestRoom?.rates?.[0]?.boardName;
-          const roomName = cheapestRoom?.rates?.[0]?.name;
-          const hotel = item.hotel;
+        {!isLoading &&
+          mergedHotels?.map((item) => {
+            const cheapest = getCheapestPrice(item.roomTypes);
+            const cheapestRoom = item.roomTypes?.find(
+              (r) => r.offerRetailRate?.amount === cheapest,
+            );
+            const boardName = cheapestRoom?.rates?.[0]?.boardName;
+            const roomName = cheapestRoom?.rates?.[0]?.name;
+            const hotel = item.hotel;
 
-          if (!hotel) return null;
+            if (!hotel) return null;
 
-          return (
-            <Link
-              to={`/hotels/${item.hotelId}`}
-              key={item.hotelId}
-              className="flex hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
-            >
-              {hotel.thumbnail ? (
-                <img
-                  src={hotel.thumbnail}
-                  alt={hotel.name}
-                  className="w-36 min-w-36 h-28 object-cover"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="w-36 min-w-36 h-28 bg-gray-100 flex items-center justify-center text-xs text-gray-400">
-                  No image
-                </div>
-              )}
-              <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
-                <div className="flex justify-between items-start gap-2">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{hotel.name}</p>
-                    <p className="text-xs text-yellow-500 mt-0.5">{getStars(hotel.stars || 0)}</p>
-                    {roomName && (
-                      <p className="text-xs text-gray-400 mt-1 truncate">{roomName}</p>
-                    )}
+            return (
+              <Link
+                to={`/hotels/${item.hotelId}`}
+                key={item.hotelId}
+                className="flex hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+              >
+                {hotel.thumbnail ? (
+                  <img
+                    src={hotel.thumbnail}
+                    alt={hotel.name}
+                    className="w-36 min-w-36 h-28 object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="w-36 min-w-36 h-28 bg-gray-100 flex items-center justify-center text-xs text-gray-400">
+                    No image
                   </div>
-                  {hotel.rating && (
-                    <span className="text-xs font-medium px-2 py-1 rounded-lg bg-green-50 text-green-700 shrink-0">
-                      {hotel.rating}
-                    </span>
-                  )}
-                </div>
-                <div className="flex justify-between items-end mt-2">
-                  <div>
-                    {cheapest && (
-                      <>
-                        <span className="text-xs text-gray-400">from </span>
-                        <span className="text-lg font-semibold text-gray-900">${Math.round(cheapest)}</span>
-                        <span className="text-xs text-gray-400"> / night</span>
-                      </>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {boardName && (
-                      <span className="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-600">
-                        {boardName}
+                )}
+                <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {hotel.name}
+                      </p>
+                      <p className="text-xs text-yellow-500 mt-0.5">
+                        {getStars(hotel.stars || 0)}
+                      </p>
+                      {roomName && (
+                        <p className="text-xs text-gray-400 mt-1 truncate">
+                          {roomName}
+                        </p>
+                      )}
+                    </div>
+                    {hotel.rating && (
+                      <span className="text-xs font-medium px-2 py-1 rounded-lg bg-green-50 text-green-700 shrink-0">
+                        {hotel.rating}
                       </span>
                     )}
-                    <span className="text-xs px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition">
-                      Select
-                    </span>
+                  </div>
+                  <div className="flex justify-between items-end mt-2">
+                    <div>
+                      {cheapest && (
+                        <>
+                          <span className="text-xs text-gray-400">from </span>
+                          <span className="text-lg font-semibold text-gray-900">
+                            ${Math.round(cheapest)}
+                          </span>
+                          <span className="text-xs text-gray-400">
+                            {" "}
+                            / night
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {boardName && (
+                        <span className="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-600">
+                          {boardName}
+                        </span>
+                      )}
+                      <span className="text-xs px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition">
+                        Select
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          );
-        })}
+              </Link>
+            );
+          })}
       </div>
     </main>
   );
