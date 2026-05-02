@@ -288,6 +288,9 @@ const DestinationsProvider = ({ children }) => {
       } catch (error) {
         console.log(error);
       }
+      finally {
+        setIsLoading(false);
+      }
     };
     fetchHotelRates();
   }, [hotelsList]);

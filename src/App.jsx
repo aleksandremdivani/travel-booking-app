@@ -5,6 +5,8 @@ import { ActivitiesLayout } from "./layouts/ActivitiesLayout";
 import SignUp from "./pages/SignUp";
 import LogIn from "./pages/LogIn";
 import { AuthContext } from "./context/AuthContext";
+import hotelDetailsPage from "./pages/HotelDetailsPage";
+import HotelDetailsPage from "./pages/HotelDetailsPage";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const HotelsPage = lazy(() =>
@@ -66,6 +68,7 @@ function App() {
         <Route element={<ActivitiesLayout />} path="/tours&activities/activity">
           <Route element={<ActivityDetailsPage />} path=":id" />
         </Route>
+        <Route element={<HotelDetailsPage />} path="/hotels/:id" />
       </Routes>
     </Suspense>
   );

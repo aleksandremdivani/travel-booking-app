@@ -236,6 +236,8 @@ export const HotelsPage = () => {
     setDates,
     setDateRange,
     isLoading,
+    setIsLoading,
+    
     mergedHotels,
     hotelsList,
   } = useContext(DestinationsContext);
@@ -250,7 +252,9 @@ export const HotelsPage = () => {
     selectedPlaceRef.current = null;
     setDates([null, null]);
     setQuery("");
+    setIsLoading(true);
   };
+
 
   const getCheapestPrice = (roomTypes) => {
     if (!roomTypes?.length) return null;
