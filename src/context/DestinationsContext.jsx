@@ -300,6 +300,7 @@ const DestinationsProvider = ({ children }) => {
     });
     return hotelData;
   }, [hotelRates, hotelsList]);
+  console.log(mergedHotels);
   // ============================================================
   // 4. WEATHER
   // ============================================================
