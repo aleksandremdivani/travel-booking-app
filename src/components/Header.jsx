@@ -97,7 +97,7 @@ const Header = () => {
             {user && (
               <div className="flex items-center gap-3 relative user-dropdown">
                 <p className={`capitalize ${isTransparent && "text-white"}`}>
-                  {user.user_metadata.firstName || user.user_metadata.name}
+                  {user.user_metadata.firstName + " " + user.user_metadata.lastName || user.user_metadata.name }
                 </p>
                 <img
                   onClick={() => setOpen((prev) => !prev)}
