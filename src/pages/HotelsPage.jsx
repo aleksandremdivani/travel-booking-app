@@ -237,9 +237,10 @@ export const HotelsPage = () => {
     setDateRange,
     isLoading,
     setIsLoading,
-    
+    hotelRates,
     mergedHotels,
     hotelsList,
+    selectedPlace,
   } = useContext(DestinationsContext);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -346,12 +347,16 @@ export const HotelsPage = () => {
           </>
         )}
 
-        {!isLoading && !mergedHotels?.length && (
+        {!isLoading && !mergedHotels?.length && !selectedPlace && (
           <div className="text-center py-24 text-gray-400 text-sm">
             Search for a destination to see hotels
           </div>
         )}
-
+        {!isLoading && !hotelRates && selectedPlace && (
+          <div className="text-center py-24 text-gray-400 text-sm">
+            No results found
+          </div>
+        )}
         {!isLoading &&
           mergedHotels?.map((item) => {
             const cheapest = getCheapestPrice(item.roomTypes);

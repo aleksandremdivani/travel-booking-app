@@ -26,7 +26,8 @@ const HotelDetailsPage = () => {
     }));
     return roomData;
   }, [currentHotel, hotelData]);
-
+  console.log(mergedRooms);
+  console.log(currentHotel);
   const cheapestPrice = useMemo(() => {
     if (!mergedRooms?.length) return null;
     return Math.min(
@@ -58,6 +59,7 @@ const HotelDetailsPage = () => {
           },
         );
         setHotelData(response.data.data);
+        console.log(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -248,7 +250,8 @@ const HotelDetailsPage = () => {
             <div style={s.roomsList}>
               {mergedRooms?.map((room, i) => {
                 const price = room.rates?.[0]?.retailRate?.total?.[0]?.amount;
-                const photo = room.roomDetail?.photos?.[0]?.url;
+                const photo = room.photos?.[0]?.url;
+                console.log(room);
                 const name =
                   room.roomDetail?.roomName || room.rates?.[0]?.name || "Room";
                 const board = room.rates?.[0]?.boardName;
@@ -393,8 +396,11 @@ const HotelDetailsPage = () => {
                 arrows={true}
               >
                 {images?.map((img, i) => (
-                  <div key={i}>
+                  <div className="relative" key={i}>
                     <img src={img.url} alt="hotel" style={s.modalBigImg} />
+                    <p className="absolute top-5 left-3">
+                      {i + 1} of {images.length}
+                    </p>
                   </div>
                 ))}
               </Slider>

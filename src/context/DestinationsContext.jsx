@@ -168,7 +168,7 @@ const DestinationsProvider = ({ children }) => {
           {
             params: {
               textQuery: place,
-              type: "locality,hotel",
+              type: "locality,hotel,point_of_interest",
             },
             headers: {
               "X-API-Key": import.meta.env.VITE_LITEAPI_KEY,
@@ -260,7 +260,7 @@ const DestinationsProvider = ({ children }) => {
       return [...prev, hotel];
     });
   };
-  const [hotelRates, setHotelRates] = useState([]);
+  const [hotelRates, setHotelRates] = useState(null);
   useEffect(() => {
     if (!hotelsList?.hotelIds?.length || !startDate || !endDate) return;
     const checkInDate = formatDate(startDate);
@@ -283,7 +283,7 @@ const DestinationsProvider = ({ children }) => {
             },
           },
         );
-        console.log(response.data);
+        console.log("rates:", response.data);
         setHotelRates(response.data.data);
       } catch (error) {
         console.log(error);
@@ -295,7 +295,7 @@ const DestinationsProvider = ({ children }) => {
     fetchHotelRates();
   }, [hotelsList]);
   const mergedHotels = useMemo(() => {
-    const hotelData = hotelRates.map((rate) => {
+    const hotelData = hotelRates?.map((rate) => {
       return {
         ...rate,
         hotel: hotelsList.data.find((h) => h.id === rate.hotelId),
