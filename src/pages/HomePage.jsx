@@ -18,6 +18,9 @@ const HomePage = () => {
     handleHotelSearch,
     setHotelOffers,
     setIsLoading,
+    setQuery,
+    isOpen,
+    setIsOpen,
   } = useContext(DestinationsContext);
   useEffect(() => {
     AOS.init({
@@ -62,7 +65,10 @@ const HomePage = () => {
           </form>
         </div>
       </main>
-      <section data-aos="fade-up" className="py-4 bg-gray-100 flex flex-col items-center gap-5">
+      <section
+        data-aos="fade-up"
+        className="py-4 bg-gray-100 flex flex-col items-center gap-5"
+      >
         <div className="flex w-80/100 flex-col gap-y-2 items-center lg:items-start">
           <h2 className="text-[30px] font-bold">Top Destinations</h2>
           <ul className="flex flex-wrap justify-center gap-4 lg:justify-between w-full">
@@ -86,9 +92,9 @@ const HomePage = () => {
                     <div className="flex justify-end items-end">
                       <button
                         onClick={() => {
-                          setDestinationCity(item.name);
+                          setQuery(item.name);
                           navigate("/hotels");
-                          setIsLoading(true);
+                          setIsOpen(true);
                         }}
                         className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold"
                       >
@@ -102,7 +108,10 @@ const HomePage = () => {
           </ul>
         </div>
       </section>
-      <section data-aos="fade-up" className="flex flex-col items-center pb-7 pt-4">
+      <section
+        data-aos="fade-up"
+        className="flex flex-col items-center pb-7 pt-4"
+      >
         <h2 className="text-[30px] font-bold">Why Choose Us</h2>
         <div className="w-90/100 h-auto flex lg:justify-between flex-wrap gap-4 justify-center">
           <FeaturesCard

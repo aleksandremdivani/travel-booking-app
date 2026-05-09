@@ -101,7 +101,7 @@ const Header = () => {
                 </p>
                 <img
                   onClick={() => setOpen((prev) => !prev)}
-                  className="w-10 rounded-full border-2 border-gray-300"
+                  className="w-10 rounded-full border-2 border-black-300"
                   src={
                     user.user_metadata.avatar_url || "/assets/user-icon2.svg"
                   }

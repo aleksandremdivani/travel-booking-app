@@ -155,6 +155,7 @@ const DestinationsProvider = ({ children }) => {
   const [query, setQuery] = useState("");
   const debouncedValue = useDebounce(query, 600);
   const [places, setPlaces] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (!debouncedValue.trim()) {
@@ -449,6 +450,8 @@ const DestinationsProvider = ({ children }) => {
         hotelsList,
         hotelRates,
         mergedHotels,
+        isOpen,
+        setIsOpen,
       }}
     >
       {children}

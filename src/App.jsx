@@ -7,6 +7,7 @@ import LogIn from "./pages/LogIn";
 import { AuthContext } from "./context/AuthContext";
 import hotelDetailsPage from "./pages/HotelDetailsPage";
 import HotelDetailsPage from "./pages/HotelDetailsPage";
+import ProfilePage from "./pages/ProfilePage";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const HotelsPage = lazy(() =>
@@ -65,6 +66,7 @@ function App() {
             <Route path="/login" element={<LogIn />} />
           </>
         )}
+        <Route element={<ProfilePage/>} path="/profile"/>
         <Route element={<ActivitiesLayout />} path="/tours&activities/activity">
           <Route element={<ActivityDetailsPage />} path=":id" />
         </Route>

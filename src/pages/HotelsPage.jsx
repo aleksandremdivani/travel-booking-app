@@ -241,9 +241,10 @@ export const HotelsPage = () => {
     mergedHotels,
     hotelsList,
     selectedPlace,
+    isOpen,
+    setIsOpen,
   } = useContext(DestinationsContext);
 
-  const [isOpen, setIsOpen] = useState(false);
   const selectedPlaceRef = useRef();
 
   const handleSearch = () => {
@@ -256,14 +257,12 @@ export const HotelsPage = () => {
     setIsLoading(true);
   };
 
-
   const getCheapestPrice = (roomTypes) => {
     if (!roomTypes?.length) return null;
     return Math.min(
       ...roomTypes.map((r) => r.offerRetailRate?.amount).filter(Boolean),
     );
   };
-
   const getStars = (count) => "★".repeat(count) + "☆".repeat(5 - count);
 
   return (
