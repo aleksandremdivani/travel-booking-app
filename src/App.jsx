@@ -59,6 +59,7 @@ function App() {
           <Route element={<WeatherPage />} path="/weather" />
           <Route element={<BookingPage />} path="/booking" />
           <Route element={<MyBookings />} path="/bookings" />
+          <Route element={<ProfilePage />} path="/profile" />
         </Route>
         {!user && (
           <>
@@ -66,7 +67,6 @@ function App() {
             <Route path="/login" element={<LogIn />} />
           </>
         )}
-        <Route element={<ProfilePage/>} path="/profile"/>
         <Route element={<ActivitiesLayout />} path="/tours&activities/activity">
           <Route element={<ActivityDetailsPage />} path=":id" />
         </Route>

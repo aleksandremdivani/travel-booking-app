@@ -97,17 +97,21 @@ const Header = () => {
             {user && (
               <div className="flex items-center gap-3 relative user-dropdown">
                 <p className={`capitalize ${isTransparent && "text-white"}`}>
-                  {user.user_metadata.firstName + " " + user.user_metadata.lastName || user.user_metadata.name }
+                  {user.user_metadata.firstName +
+                    " " +
+                    user.user_metadata.lastName || user.user_metadata.name}
                 </p>
-                <img
-                  onClick={() => setOpen((prev) => !prev)}
-                  className="w-10 rounded-full border-2 border-black-300"
-                  src={
-                    user.user_metadata.avatar_url || "/assets/user-icon2.svg"
-                  }
-                  alt="user"
-                  referrerPolicy="no-referrer"
-                />
+                <Link to="/profile">
+                  <img
+                    // onClick={() => setOpen((prev) => !prev)}
+                    className="w-10 rounded-full border-1 border-black-300"
+                    src={
+                      user.user_metadata.avatar_url || "/assets/user-icon2.svg"
+                    }
+                    alt="user"
+                    referrerPolicy="no-referrer"
+                  />
+                </Link>
                 {open && (
                   <button
                     className="bg-gray-100 hover:bg-gray-200 rounded-sm px-2 text-sm absolute -bottom-4 -right-14"
