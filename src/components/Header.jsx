@@ -10,16 +10,16 @@ const Header = () => {
   const { user, setUser, signOut } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!e.target.closest(".user-dropdown")) {
-        setOpen(false);
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutside = (e) => {
+  //     if (!e.target.closest(".user-dropdown")) {
+  //       setOpen(false);
+  //     }
+  //   };
 
-    if (open) document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [open]);
+  //   if (open) document.addEventListener("click", handleClickOutside);
+  //   return () => document.removeEventListener("click", handleClickOutside);
+  // }, [open]);
   const isTransparent =
     location.pathname === "/weather" ||
     location.pathname === "/tours&activities";
@@ -105,7 +105,7 @@ const Header = () => {
             {user && (
               <div className="flex items-center gap-3 relative user-dropdown">
                 <p className={`capitalize ${isTransparent && "text-white"}`}>
-                  {user.user_metadata.name? user.user_metadata.name: userName}
+                  {user.user_metadata.full_name? user.user_metadata.full_name: userName}
                 </p>
                 <Link to="/profile">
                   <img
@@ -212,14 +212,14 @@ const Header = () => {
                     {userName || user.user_metadata.name}
                   </p>
 
-                  {open && (
+                  {/* {open && (
                     <button
                       className="bg-gray-100 hover:bg-gray-200 rounded-sm px-2 text-sm absolute -bottom-4 left-8"
                       onClick={signOut}
                     >
                       Log out
                     </button>
-                  )}
+                  )} */}
                 </div>
               )}
             </div>

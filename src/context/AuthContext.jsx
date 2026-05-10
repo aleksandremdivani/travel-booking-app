@@ -28,6 +28,28 @@ export const AuthProvider = ({ children }) => {
       },
     });
   };
+  const updateUserData = async (newFullName, newFirstName, newLastName) => {
+    console.log("boyyy")
+    if (user.user_metadata.full_name) {
+      const { data, error } = await supabase.auth.updateUser({
+        data: {
+          full_name: newFullName,
+        },
+      });
+      console.log(error);
+      console.log(data);
+    } else {
+      const { data, error } = await supabase.auth.updateUser({
+        data: {
+          firstName: newFirstName,
+          lastName: newLastName,
+        },
+      });
+      console.log(error);
+      console.log("data:", data);
+    }
+  };
+
   useEffect(() => {
     const {
       data: { subscription },
@@ -53,7 +75,15 @@ export const AuthProvider = ({ children }) => {
   };
   return (
     <AuthContext.Provider
-      value={{ signUp, setUser, signIn, user, signOut, googleAuth }}
+      value={{
+        signUp,
+        setUser,
+        signIn,
+        user,
+        signOut,
+        googleAuth,
+        updateUserData,
+      }}
     >
       {children}
     </AuthContext.Provider>
