@@ -23,6 +23,14 @@ const Header = () => {
   const isTransparent =
     location.pathname === "/weather" ||
     location.pathname === "/tours&activities";
+  const userName =
+    user?.user_metadata?.firstName + " " + user?.user_metadata?.lastName;
+    console.log("meta:", user?.user_metadata);
+  // if (user) {
+  //   const userName =
+  //     user.user_metadata.firstName + " " + user.user_metadata.lastName;
+  //   console.log("meta:", user.user_metadata);
+  // }
   return (
     <>
       <header
@@ -97,9 +105,7 @@ const Header = () => {
             {user && (
               <div className="flex items-center gap-3 relative user-dropdown">
                 <p className={`capitalize ${isTransparent && "text-white"}`}>
-                  {user.user_metadata.firstName +
-                    " " +
-                    user.user_metadata.lastName || user.user_metadata.name}
+                  {user.user_metadata.name? user.user_metadata.name: userName}
                 </p>
                 <Link to="/profile">
                   <img
@@ -203,7 +209,7 @@ const Header = () => {
                     referrerPolicy="no-referrer"
                   />
                   <p className="capitalize">
-                    {user.user_metadata.firstName || user.user_metadata.name}
+                    {userName || user.user_metadata.name}
                   </p>
 
                   {open && (
