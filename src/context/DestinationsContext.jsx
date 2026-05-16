@@ -101,52 +101,52 @@ const DestinationsProvider = ({ children }) => {
   //   setBooked(false);
   // };
 
-  const handleBooking = () => {
-    if (selectedHotels.length === 0) return;
+  // const handleBooking = () => {
+  //   if (selectedHotels.length === 0) return;
 
-    const newBooking = selectedHotels.map((item) => {
-      return {
-        hotelData: item,
-        id: `TRIP-${Date.now()}-${Math.random()
-          .toString(36)
-          .toUpperCase()
-          .substring(2, 7)}`,
-        city: destinationCity,
-        country: weather?.sys?.country || "",
-      };
-    });
+  //   const newBooking = selectedHotels.map((item) => {
+  //     return {
+  //       hotelData: item,
+  //       id: `TRIP-${Date.now()}-${Math.random()
+  //         .toString(36)
+  //         .toUpperCase()
+  //         .substring(2, 7)}`,
+  //       city: destinationCity,
+  //       country: weather?.sys?.country || "",
+  //     };
+  //   });
 
-    setBookings((prev) => [...prev, ...newBooking]);
+  //   setBookings((prev) => [...prev, ...newBooking]);
 
-    setSelectedHotels([]);
-    setDestinationCity("");
-    setActivities([]);
-    setWeather(null);
-    setBooked(true);
-    setHotelOffers([]);
-    setDateRange([null, null]);
-  };
+  //   setSelectedHotels([]);
+  //   setDestinationCity("");
+  //   setActivities([]);
+  //   setWeather(null);
+  //   setBooked(true);
+  //   setHotelOffers([]);
+  //   setDateRange([null, null]);
+  // };
 
-  const calculateTotalStayPrice = (checkIn, checkOut, nightlyPrice) => {
-    if (!checkIn || !checkOut) return 0;
+  // const calculateTotalStayPrice = (checkIn, checkOut, nightlyPrice) => {
+  //   if (!checkIn || !checkOut) return 0;
 
-    const start = new Date(checkIn);
-    const end = new Date(checkOut);
+  //   const start = new Date(checkIn);
+  //   const end = new Date(checkOut);
 
-    const diffInMs = end - start;
-    const nights = Math.max(1, Math.round(diffInMs / (1000 * 60 * 60 * 24)));
+  //   const diffInMs = end - start;
+  //   const nights = Math.max(1, Math.round(diffInMs / (1000 * 60 * 60 * 24)));
 
-    return nights * nightlyPrice;
-  };
+  //   return nights * nightlyPrice;
+  // };
 
-  const getConvertRate = (hotel) => {
-    const hotelCurrency = hotel.offers[0].price.currency;
+  // const getConvertRate = (hotel) => {
+  //   const hotelCurrency = hotel.offers[0].price.currency;
 
-    const rateData =
-      hotelOffers?.dictionaries?.currencyConversionLookupRates?.[hotelCurrency];
+  //   const rateData =
+  //     hotelOffers?.dictionaries?.currencyConversionLookupRates?.[hotelCurrency];
 
-    return rateData ? Number(rateData.rate) : 1;
-  };
+  //   return rateData ? Number(rateData.rate) : 1;
+  // };
 
   // ============================================================
   // 2. PLACES
@@ -216,51 +216,51 @@ const DestinationsProvider = ({ children }) => {
   }, [selectedPlace]);
   console.log(selectedPlace);
   // const [hotelsList, SetHotelsList] = useState([]);
-  const [hotelOffers, setHotelOffers] = useState(null);
+  // const [hotelOffers, setHotelOffers] = useState(null);
 
-  const [selectedHotels, setSelectedHotels] = useState(() => {
-    const saved = localStorage.getItem("selectedHotels");
-    return saved ? JSON.parse(saved) : [];
-  });
+  // const [selectedHotels, setSelectedHotels] = useState(() => {
+  //   const saved = localStorage.getItem("selectedHotels");
+  //   return saved ? JSON.parse(saved) : [];
+  // });
 
-  const totalPrice = selectedHotels.reduce((sum, item) => {
-    const nightlyPriceUSD = Math.round(
-      (Number(item.offers[0].price.base) ||
-        Number(item.offers[0].price.total)) * getConvertRate(item),
-    );
+  // const totalPrice = selectedHotels.reduce((sum, item) => {
+  //   const nightlyPriceUSD = Math.round(
+  //     (Number(item.offers[0].price.base) ||
+  //       Number(item.offers[0].price.total)) * getConvertRate(item),
+  //   );
 
-    const stayTotalPrice = calculateTotalStayPrice(
-      item.offers[0].checkInDate,
-      item.offers[0].checkOutDate,
-      nightlyPriceUSD,
-    );
+  //   const stayTotalPrice = calculateTotalStayPrice(
+  //     item.offers[0].checkInDate,
+  //     item.offers[0].checkOutDate,
+  //     nightlyPriceUSD,
+  //   );
 
-    return sum + stayTotalPrice;
-  }, 0);
+  //   return sum + stayTotalPrice;
+  // }, 0);
 
-  const handleHotelSelect = (hotel) => {
-    setSelectedHotels((prev) => {
-      const isAlreadySelected = prev.find(
-        (item) =>
-          item.hotel.hotelId === hotel.hotel.hotelId &&
-          item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
-          item.offers[0].checkOutDate === hotel.offers[0].checkOutDate,
-      );
+  // const handleHotelSelect = (hotel) => {
+  //   setSelectedHotels((prev) => {
+  //     const isAlreadySelected = prev.find(
+  //       (item) =>
+  //         item.hotel.hotelId === hotel.hotel.hotelId &&
+  //         item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
+  //         item.offers[0].checkOutDate === hotel.offers[0].checkOutDate,
+  //     );
 
-      if (isAlreadySelected) {
-        return prev.filter(
-          (item) =>
-            !(
-              item.hotel.hotelId === hotel.hotel.hotelId &&
-              item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
-              item.offers[0].checkOutDate === hotel.offers[0].checkOutDate
-            ),
-        );
-      }
+  //     if (isAlreadySelected) {
+  //       return prev.filter(
+  //         (item) =>
+  //           !(
+  //             item.hotel.hotelId === hotel.hotel.hotelId &&
+  //             item.offers[0].checkInDate === hotel.offers[0].checkInDate &&
+  //             item.offers[0].checkOutDate === hotel.offers[0].checkOutDate
+  //           ),
+  //       );
+  //     }
 
-      return [...prev, hotel];
-    });
-  };
+  //     return [...prev, hotel];
+  //   });
+  // };
   const [hotelRates, setHotelRates] = useState(null);
   useEffect(() => {
     if (!hotelsList?.hotelIds?.length || !startDate || !endDate) return;

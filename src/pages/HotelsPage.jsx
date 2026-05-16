@@ -260,7 +260,7 @@ export const HotelsPage = () => {
   const getCheapestPrice = (roomTypes) => {
     if (!roomTypes?.length) return null;
     return Math.min(
-      ...roomTypes.map((r) => r.offerRetailRate?.amount).filter(Boolean),
+      ...roomTypes.map((r) => r.offerRetailRate?.amount)
     );
   };
   const getStars = (count) => "★".repeat(count) + "☆".repeat(5 - count);
