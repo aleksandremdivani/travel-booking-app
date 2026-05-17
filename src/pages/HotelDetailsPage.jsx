@@ -19,35 +19,6 @@ const HotelDetailsPage = () => {
   const images = hotelData?.hotelImages;
   const extraCount = (images?.length || 0) - 8;
 
-  const mergedRooms = useMemo(() => {
-    const roomData = currentHotel?.roomTypes?.map((h) => ({
-      ...h,
-      roomDetail: hotelData?.rooms?.find((i) => i.id === h.id),
-    }));
-    return roomData;
-  }, [currentHotel, hotelData]);
-  console.log(mergedRooms);
-  console.log(currentHotel);
-  const cheapestPrice = useMemo(() => {
-    if (!mergedRooms?.length) return null;
-    return Math.min(
-      ...mergedRooms.map(
-        (r) => r.rates?.[0]?.retailRate?.total?.[0]?.amount || Infinity,
-      ),
-    );
-  }, [mergedRooms]);
-
-  const facilities = showAllFacilities
-    ? hotelData?.hotelFacilities
-    : hotelData?.hotelFacilities?.slice(0, 12);
-
-  const formatPrice = (amount) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0,
-    }).format(amount);
-
   useEffect(() => {
     const fetchHotelDetails = async () => {
       try {
@@ -66,6 +37,48 @@ const HotelDetailsPage = () => {
     };
     fetchHotelDetails();
   }, [id]);
+  // console.log("drooms:", hotelData?.rooms);
+  // const mergedRooms = useMemo(() => {
+  //   const roomData = currentHotel?.roomTypes?.map((h) => ({
+  //     ...h,
+  //     roomDetail: hotelData?.rooms?.find((i) => i.id === h.roomTypeId),
+  //   }));
+  //   return roomData;
+  // }, [currentHotel, hotelData]);
+  // console.log("rooms:", mergedRooms);
+  // console.log(currentHotel);
+  const cheapestPrice = useMemo(() => {
+    if (!currentHotel?.roomTypes?.length) return null;
+    return Math.min(
+      ...currentHotel?.roomTypes.map(
+        (r) => r.rates?.[0]?.retailRate?.total?.[0]?.amount || Infinity,
+      ),
+    );
+  }, [currentHotel?.roomTypes]);
+  const [selectedRooms, setSelectedRooms] = useState([]);
+  const handleRoomSelection = (room) => {
+    setSelectedRooms((prev) => {
+      const isAlreadySelected = prev.find((i) => i.id === room.id);
+      if (isAlreadySelected) {
+        return prev.filter((i) => i.roomTypeId !== room.roomTypeId);
+      }
+      return [...prev, room];
+    });
+  };
+
+  useEffect(() => {
+    console.log(selectedRooms);
+  }, [selectedRooms]);
+  const facilities = showAllFacilities
+    ? hotelData?.hotelFacilities
+    : hotelData?.hotelFacilities?.slice(0, 12);
+
+  const formatPrice = (amount) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(amount);
 
   if (!hotelData) {
     return (
@@ -248,10 +261,9 @@ const HotelDetailsPage = () => {
           <div style={s.section} className="fade-up-4" id="rooms-section">
             <h2 style={s.sectionTitle}>Available rooms</h2>
             <div style={s.roomsList}>
-              {mergedRooms?.map((room, i) => {
+              {currentHotel?.roomTypes?.map((room, i) => {
                 const price = room.rates?.[0]?.retailRate?.total?.[0]?.amount;
-                const photo = room.photos?.[0]?.url;
-                console.log(room);
+                const photo = hotelData?.main_photo;
                 const name =
                   room.roomDetail?.roomName || room.rates?.[0]?.name || "Room";
                 const board = room.rates?.[0]?.boardName;
@@ -280,7 +292,11 @@ const HotelDetailsPage = () => {
                           <span style={s.roomPriceNight}>/ night</span>
                         </>
                       )}
-                      <button style={s.bookBtn} className="book-btn">
+                      <button
+                        style={s.bookBtn}
+                        onClick={() => handleRoomSelection(room)}
+                        className="book-btn"
+                      >
                         Book now
                       </button>
                     </div>

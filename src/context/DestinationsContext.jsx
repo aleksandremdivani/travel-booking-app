@@ -188,7 +188,10 @@ const DestinationsProvider = ({ children }) => {
   // ============================================================
   // 3. HOTELS
   // ============================================================
-  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [selectedPlace, setSelectedPlace] = useState(() => {
+    const savedPlace = sessionStorage.getItem("selectedPlace");
+    return savedPlace ? savedPlace : null;
+  });
   const [hotelsList, SetHotelsList] = useState([]);
 
   useEffect(() => {
@@ -288,14 +291,18 @@ const DestinationsProvider = ({ children }) => {
         setHotelRates(response.data.data);
       } catch (error) {
         console.log(error);
-      }
-      finally {
+      } finally {
         setIsLoading(false);
       }
     };
     fetchHotelRates();
   }, [hotelsList]);
   const mergedHotels = useMemo(() => {
+    // const savedHotels = sessionStorage.getItem("hotels");
+
+    // if (savedHotels && savedHotels !== "undefined") {
+    //   return JSON.parse(savedHotels);
+    // } else {
     const hotelData = hotelRates?.map((rate) => {
       return {
         ...rate,
@@ -392,6 +399,10 @@ const DestinationsProvider = ({ children }) => {
   }, [weather, accessToken]);
 
   useEffect(() => {
+    sessionStorage.setItem("selectedPlace", JSON.stringify(selectedPlace));
+  }, [selectedPlace]);
+
+  useEffect(() => {
     localStorage.setItem("dateRange", JSON.stringify(dateRange));
   }, [dateRange]);
 
@@ -399,9 +410,9 @@ const DestinationsProvider = ({ children }) => {
     localStorage.setItem("destinationCity", destinationCity);
   }, [destinationCity]);
 
-  useEffect(() => {
-    localStorage.setItem("selectedHotels", JSON.stringify(selectedHotels));
-  }, [selectedHotels]);
+  // useEffect(() => {
+  //   localStorage.setItem("selectedHotels", JSON.stringify(selectedHotels));
+  // }, [selectedHotels]);
 
   useEffect(() => {
     localStorage.setItem("bookings", JSON.stringify(bookings));
@@ -423,22 +434,22 @@ const DestinationsProvider = ({ children }) => {
         setDateRange,
         endDate,
         hotelsList,
-        hotelOffers,
-        setHotelOffers,
+        // hotelOffers,
+        // setHotelOffers,
         // handleHotelSearch,
         isLoading,
         setIsLoading,
         destinationCity,
         activities,
         accessToken,
-        handleHotelSelect,
-        selectedHotels,
-        totalPrice,
-        handleBooking,
+        // handleHotelSelect,
+        // selectedHotels,
+        // totalPrice,
+        // handleBooking,
         bookings,
         booked,
-        calculateTotalStayPrice,
-        getConvertRate,
+        // calculateTotalStayPrice,
+        // getConvertRate,
         setBookings,
         selectedPlace,
         setSelectedPlace,
