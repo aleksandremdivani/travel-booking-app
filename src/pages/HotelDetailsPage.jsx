@@ -1,23 +1,42 @@
 import axios from "axios";
 import { useContext, useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import { DestinationsContext } from "../context/DestinationsContext";
+import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 
 const HotelDetailsPage = () => {
   const [hotelData, setHotelData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAllFacilities, setShowAllFacilities] = useState(false);
   const { id } = useParams();
-  const { mergedHotels, dateRange } = useContext(DestinationsContext);
-
-  const currentHotel = mergedHotels?.find((i) => i.hotelId === id);
+  const {
+    mergedHotels,
+    dateRange,
+    selectedRooms,
+    setSelectedRooms,
+    handleRoomSelection,
+  } = useContext(DestinationsContext);
+  const savedCurrentHotel = sessionStorage.getItem("currentHotel");
+  const parsed = JSON.parse(savedCurrentHotel);
+  const currentHotel =
+    parsed?.hotelId === id
+      ? parsed
+      : mergedHotels?.find((i) => i.hotelId === id);
   const navigate = useNavigate();
   const cappedImages = hotelData?.hotelImages?.slice(0, 8);
   const images = hotelData?.hotelImages;
   const extraCount = (images?.length || 0) - 8;
+
+  useEffect(() => {
+    sessionStorage.setItem("currentHotel", JSON.stringify(currentHotel));
+  }, [currentHotel]);
+
+  useEffect(() => {
+    console.log(selectedRooms)
+  }, [selectedRooms])
 
   useEffect(() => {
     const fetchHotelDetails = async () => {
@@ -55,20 +74,7 @@ const HotelDetailsPage = () => {
       ),
     );
   }, [currentHotel?.roomTypes]);
-  const [selectedRooms, setSelectedRooms] = useState([]);
-  const handleRoomSelection = (room) => {
-    setSelectedRooms((prev) => {
-      const isAlreadySelected = prev.find((i) => i.id === room.id);
-      if (isAlreadySelected) {
-        return prev.filter((i) => i.roomTypeId !== room.roomTypeId);
-      }
-      return [...prev, room];
-    });
-  };
 
-  useEffect(() => {
-    console.log(selectedRooms);
-  }, [selectedRooms]);
   const facilities = showAllFacilities
     ? hotelData?.hotelFacilities
     : hotelData?.hotelFacilities?.slice(0, 12);
@@ -267,6 +273,9 @@ const HotelDetailsPage = () => {
                 const name =
                   room.roomDetail?.roomName || room.rates?.[0]?.name || "Room";
                 const board = room.rates?.[0]?.boardName;
+                const isSelected = selectedRooms.find(
+                  (i) => i.roomTypeId === room.roomTypeId,
+                );
 
                 return (
                   <div key={i} style={s.roomCard} className="room-card-hover">
@@ -294,10 +303,10 @@ const HotelDetailsPage = () => {
                       )}
                       <button
                         style={s.bookBtn}
-                        onClick={() => handleRoomSelection(room)}
+                        onClick={() => handleRoomSelection(room, currentHotel)}
                         className="book-btn"
                       >
-                        Book now
+                        {isSelected ? "Cancel" : "Book Now"}
                       </button>
                     </div>
                   </div>
@@ -384,6 +393,17 @@ const HotelDetailsPage = () => {
                 No booking fees · Instant confirmation
               </span>
             </div>
+
+            {selectedRooms.length > 0 && (
+              <div className="flex justify-center p-2">
+                <button
+                  onClick={() => navigate("/booking")}
+                  className="flex gap-1 text-blue-400 hover:text-blue-500"
+                >
+                  Proceed to booking <ArrowBigRight />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -414,7 +434,7 @@ const HotelDetailsPage = () => {
                 {images?.map((img, i) => (
                   <div className="relative" key={i}>
                     <img src={img.url} alt="hotel" style={s.modalBigImg} />
-                    <p className="absolute top-5 left-3">
+                    <p className="absolute bottom-3 left-7">
                       {i + 1} of {images.length}
                     </p>
                   </div>

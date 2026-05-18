@@ -30,11 +30,7 @@ const ActivityDetailsPage = lazy(() =>
     default: module.ActivityDetailsPage,
   })),
 );
-const BookingPage = lazy(() =>
-  import("./pages/BookingPage").then((module) => ({
-    default: module.BookingPage,
-  })),
-);
+const BookingPage = lazy(() => import("./pages/BookingPage"));
 const MyBookings = lazy(() =>
   import("./pages/MyBookings").then((module) => ({
     default: module.MyBookings,

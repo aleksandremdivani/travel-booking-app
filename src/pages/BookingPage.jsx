@@ -313,21 +313,20 @@
 //   );
 // };
 
-import React from 'react'
+import React, { useContext } from "react";
+import { useLocation } from "react-router-dom";
+import { DestinationsContext } from "../context/DestinationsContext";
 
 const BookingPage = () => {
-  const insertBooking = () => {
-    
-  }
-  return (
-    <>
-    
-    </>
-  )
-}
+  const { selectedRooms } = useContext(DestinationsContext);
+  const insertBooking = () => {};
+  return <>{
+    selectedRooms.map(() => {
+      return (
+        <div></div>
+      )
+    })
+  }</>;
+};
 
-export default BookingPage
-
-
-
-
+export default BookingPage;

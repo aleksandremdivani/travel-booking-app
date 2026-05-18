@@ -265,6 +265,20 @@ const DestinationsProvider = ({ children }) => {
   //   });
   // };
   const [hotelRates, setHotelRates] = useState(null);
+  const [selectedRooms, setSelectedRooms] = useState([]);
+
+  const handleRoomSelection = (room, currentHotel) => {
+    setSelectedRooms((prev) => {
+      const isAlreadySelected = prev.find(
+        (i) => i.roomTypeId === room.roomTypeId,
+      );
+      if (isAlreadySelected) {
+        return prev.filter((i) => i.roomTypeId !== room.roomTypeId);
+      }
+      return [...prev, { ...room, hotel: currentHotel }];
+    });
+  };
+
   useEffect(() => {
     if (!hotelsList?.hotelIds?.length || !startDate || !endDate) return;
     const checkInDate = formatDate(startDate);
@@ -463,6 +477,9 @@ const DestinationsProvider = ({ children }) => {
         mergedHotels,
         isOpen,
         setIsOpen,
+        selectedRooms,
+        setSelectedRooms,
+        handleRoomSelection,
       }}
     >
       {children}
