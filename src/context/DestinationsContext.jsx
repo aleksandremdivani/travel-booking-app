@@ -195,7 +195,7 @@ const DestinationsProvider = ({ children }) => {
   const [hotelsList, SetHotelsList] = useState([]);
 
   useEffect(() => {
-    if (!selectedPlace) return;
+    if (!selectedPlace?.placeId) return;
     const fetchHotelsList = async () => {
       try {
         const response = await axios.get(
@@ -267,15 +267,58 @@ const DestinationsProvider = ({ children }) => {
   const [hotelRates, setHotelRates] = useState(null);
   const [selectedRooms, setSelectedRooms] = useState([]);
 
+  // const handleRoomSelection = (room, currentHotel) => {
+  //   setSelectedRooms((prev) => {
+  //     const isAlreadySelected = prev.find(
+  //       (i) => i.selctedRoom.roomTypeId === currentHotel.selctedRoom.roomTypeId,
+  //     );
+  //     if (isAlreadySelected) {
+  //       return prev.filter((i) => i.roomTypeId !== room.roomTypeId);
+  //     }
+  //     return [...prev, { ...room, hotel: currentHotel }];
+  //   });
+  // };
+
   const handleRoomSelection = (room, currentHotel) => {
     setSelectedRooms((prev) => {
-      const isAlreadySelected = prev.find(
-        (i) => i.roomTypeId === room.roomTypeId,
+      const existingHotel = prev.find(
+        (i) => i.hotelId === currentHotel.hotelId,
       );
-      if (isAlreadySelected) {
-        return prev.filter((i) => i.roomTypeId !== room.roomTypeId);
+      const isAlreadySelected = existingHotel?.selectedRooms?.find(
+        (r) => r.roomTypeId === room.roomTypeId,
+      );
+      if (existingHotel && !isAlreadySelected) {
+        return prev.map((h) => {
+          if (h.hotelId === currentHotel.hotelId) {
+            return {
+              ...h,
+              selectedRooms: [...h.selectedRooms, room],
+            };
+          }
+          return h;
+        });
       }
-      return [...prev, { ...room, hotel: currentHotel }];
+      if (existingHotel && isAlreadySelected) {
+        return prev
+          .map((h) => {
+            if (h.hotelId === currentHotel.hotelId) {
+              return {
+                ...h,
+                selectedRooms: h.selectedRooms.filter(
+                  (r) => r.roomTypeId !== room.roomTypeId,
+                ),
+              };
+            }
+            return h;
+          })
+          .filter((h) => h.selectedRooms.length > 0); // case 4
+      }
+
+      if (!existingHotel) {
+        return [...prev, { ...currentHotel, selectedRooms: [room] }];
+      }
+
+      // 4 cases go here
     });
   };
 
@@ -412,9 +455,9 @@ const DestinationsProvider = ({ children }) => {
     fetchActivities();
   }, [weather, accessToken]);
 
-  useEffect(() => {
-    sessionStorage.setItem("selectedPlace", JSON.stringify(selectedPlace));
-  }, [selectedPlace]);
+  // useEffect(() => {
+  //   sessionStorage.setItem("selectedPlace", JSON.stringify(selectedPlace));
+  // }, [selectedPlace]);
 
   useEffect(() => {
     localStorage.setItem("dateRange", JSON.stringify(dateRange));

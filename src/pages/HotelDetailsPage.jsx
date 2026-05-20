@@ -35,8 +35,8 @@ const HotelDetailsPage = () => {
   }, [currentHotel]);
 
   useEffect(() => {
-    console.log(selectedRooms)
-  }, [selectedRooms])
+    console.log(selectedRooms);
+  }, [selectedRooms]);
 
   useEffect(() => {
     const fetchHotelDetails = async () => {
@@ -273,8 +273,11 @@ const HotelDetailsPage = () => {
                 const name =
                   room.roomDetail?.roomName || room.rates?.[0]?.name || "Room";
                 const board = room.rates?.[0]?.boardName;
-                const isSelected = selectedRooms.find(
-                  (i) => i.roomTypeId === room.roomTypeId,
+                const existingHotel = selectedRooms.find(
+                  (i) => i.id === hotelData.id,
+                );
+                const isSelected = existingHotel?.selectedRooms?.find(
+                  (r) => r.roomTypeId === room.roomTypeId,
                 );
 
                 return (
@@ -303,7 +306,7 @@ const HotelDetailsPage = () => {
                       )}
                       <button
                         style={s.bookBtn}
-                        onClick={() => handleRoomSelection(room, currentHotel)}
+                        onClick={() => handleRoomSelection(room, hotelData)}
                         className="book-btn"
                       >
                         {isSelected ? "Cancel" : "Book Now"}
