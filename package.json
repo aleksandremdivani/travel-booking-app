@@ -17,6 +17,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "aos": "^2.3.4",
     "axios": "^1.13.6",
+    "date-fns": "^4.2.1",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "lucide-react": "^0.575.0",

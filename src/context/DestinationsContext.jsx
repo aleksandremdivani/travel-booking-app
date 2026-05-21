@@ -279,20 +279,23 @@ const DestinationsProvider = ({ children }) => {
   //   });
   // };
 
-  const handleRoomSelection = (room, currentHotel) => {
+  const handleRoomSelection = (room, currentHotel, checkIn, checkOut) => {
     setSelectedRooms((prev) => {
-      const existingHotel = prev.find(
-        (i) => i.hotelId === currentHotel.hotelId,
-      );
+      const existingHotel = prev.find((i) => i.id === currentHotel.id);
       const isAlreadySelected = existingHotel?.selectedRooms?.find(
         (r) => r.roomTypeId === room.roomTypeId,
       );
       if (existingHotel && !isAlreadySelected) {
         return prev.map((h) => {
-          if (h.hotelId === currentHotel.hotelId) {
+          if (h.id === currentHotel.id) {
             return {
               ...h,
-              selectedRooms: [...h.selectedRooms, room],
+              selectedRooms: [
+                ...h.selectedRooms,
+                { ...room, check_in: checkIn, check_out: checkOut },
+              ],
+              // check_in: checkIn,
+              // check_out: checkOut,
             };
           }
           return h;
@@ -301,9 +304,11 @@ const DestinationsProvider = ({ children }) => {
       if (existingHotel && isAlreadySelected) {
         return prev
           .map((h) => {
-            if (h.hotelId === currentHotel.hotelId) {
+            if (h.id === currentHotel.id) {
               return {
                 ...h,
+                // check_in: checkIn,
+                // check_out: checkOut,
                 selectedRooms: h.selectedRooms.filter(
                   (r) => r.roomTypeId !== room.roomTypeId,
                 ),
@@ -315,12 +320,67 @@ const DestinationsProvider = ({ children }) => {
       }
 
       if (!existingHotel) {
-        return [...prev, { ...currentHotel, selectedRooms: [room] }];
+        return [
+          ...prev,
+          {
+            ...currentHotel,
+            selectedRooms: [
+              {
+                ...room,
+                check_in: checkIn,
+                check_out: checkOut,
+              },
+            ],
+          },
+        ];
       }
 
       // 4 cases go here
     });
   };
+
+  // const handleRoomSelection = (room, currentHotel) => {
+  //   setSelectedRooms((prev) => {
+  //     const existingHotel = prev.find(
+  //       (i) => i.hotelId === currentHotel.hotelId,
+  //     );
+  //     const isAlreadySelected = existingHotel?.selectedRooms?.find(
+  //       (r) => r.roomTypeId === room.roomTypeId,
+  //     );
+  //     if (existingHotel && !isAlreadySelected) {
+  //       return prev.map((h) => {
+  //         if (h.hotelId === currentHotel.hotelId) {
+  //           return {
+  //             ...h,
+  //             selectedRooms: [...h.selectedRooms, room],
+  //           };
+  //         }
+  //         return h;
+  //       });
+  //     }
+  //     if (existingHotel && isAlreadySelected) {
+  //       return prev
+  //         .map((h) => {
+  //           if (h.hotelId === currentHotel.hotelId) {
+  //             return {
+  //               ...h,
+  //               selectedRooms: h.selectedRooms.filter(
+  //                 (r) => r.roomTypeId !== room.roomTypeId,
+  //               ),
+  //             };
+  //           }
+  //           return h;
+  //         })
+  //         .filter((h) => h.selectedRooms.length > 0); // case 4
+  //     }
+
+  //     if (!existingHotel) {
+  //       return [...prev, { ...currentHotel, selectedRooms: [room] }];
+  //     }
+
+  //     // 4 cases go here
+  //   });
+  // };
 
   useEffect(() => {
     if (!hotelsList?.hotelIds?.length || !startDate || !endDate) return;

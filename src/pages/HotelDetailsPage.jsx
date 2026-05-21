@@ -306,7 +306,14 @@ const HotelDetailsPage = () => {
                       )}
                       <button
                         style={s.bookBtn}
-                        onClick={() => handleRoomSelection(room, hotelData)}
+                        onClick={() =>
+                          handleRoomSelection(
+                            room,
+                            hotelData,
+                            dateRange[0],
+                            dateRange[1],
+                          )
+                        }
                         className="book-btn"
                       >
                         {isSelected ? "Cancel" : "Book Now"}
