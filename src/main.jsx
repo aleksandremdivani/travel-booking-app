@@ -7,10 +7,10 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <DestinationsProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <DestinationsProvider>
         <App />
-      </AuthProvider>
-    </DestinationsProvider>
+      </DestinationsProvider>
+    </AuthProvider>
   </BrowserRouter>,
 );

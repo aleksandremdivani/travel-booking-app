@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import { DestinationsContext } from "../context/DestinationsContext";
 import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
+import { AuthContext } from "../context/AuthContext";
 
 const HotelDetailsPage = () => {
   const [hotelData, setHotelData] = useState(null);
@@ -19,6 +20,7 @@ const HotelDetailsPage = () => {
     setSelectedRooms,
     handleRoomSelection,
   } = useContext(DestinationsContext);
+
   const savedCurrentHotel = sessionStorage.getItem("currentHotel");
   const parsed = JSON.parse(savedCurrentHotel);
   const currentHotel =
@@ -310,8 +312,8 @@ const HotelDetailsPage = () => {
                           handleRoomSelection(
                             room,
                             hotelData,
-                            dateRange[0],
-                            dateRange[1],
+                            dateRange[0].toISOString().split('T')[0],
+                            dateRange[1].toISOString().split('T')[0],
                           )
                         }
                         className="book-btn"

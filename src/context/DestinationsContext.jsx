@@ -1,6 +1,15 @@
 import { useDebounce } from "@uidotdev/usehooks";
 import axios from "axios";
-import { createContext, useEffect, useMemo, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { AuthContext } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const DestinationsContext = createContext();
 
@@ -18,9 +27,11 @@ const DestinationsProvider = ({ children }) => {
       parsed[1] ? new Date(parsed[1]) : null,
     ];
   });
+
   const [startDate, endDate] = dateRange;
   const [dates, setDates] = useState([null, null]);
   const [accessToken, setAccessToken] = useState(null);
+  const { user } = useContext(AuthContext);
 
   const destinationSearchRef = useRef();
 
@@ -278,9 +289,10 @@ const DestinationsProvider = ({ children }) => {
   //     return [...prev, { ...room, hotel: currentHotel }];
   //   });
   // };
-
+  const navigate = useNavigate();
   const handleRoomSelection = (room, currentHotel, checkIn, checkOut) => {
     setSelectedRooms((prev) => {
+      if(!user) navigate("/signup")
       const existingHotel = prev.find((i) => i.id === currentHotel.id);
       const isAlreadySelected = existingHotel?.selectedRooms?.find(
         (r) => r.roomTypeId === room.roomTypeId,

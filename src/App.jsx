@@ -1,4 +1,4 @@
-import { lazy, Suspense, useContext } from "react";
+import React, { lazy, Suspense, useContext } from "react";
 import { Route, Routes } from "react-router-dom";
 import { MainLayout } from "./layouts/MainLayout";
 import { ActivitiesLayout } from "./layouts/ActivitiesLayout";
@@ -53,7 +53,7 @@ function App() {
           <Route element={<HotelsPage />} path="/hotels" />
           <Route element={<ActivitiesPage />} path="/tours&activities" />
           <Route element={<WeatherPage />} path="/weather" />
-          <Route element={<BookingPage />} path="/booking" />
+          {user && <Route element={<BookingPage />} path="/booking" />}
           <Route element={<MyBookings />} path="/bookings" />
           <Route element={<ProfilePage />} path="/profile" />
         </Route>
