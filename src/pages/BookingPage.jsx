@@ -319,6 +319,7 @@ import { ArrowRight, Bed } from "lucide-react";
 import { differenceInDays } from "date-fns";
 import { AuthContext } from "../context/AuthContext";
 import { supabase } from "../supabase";
+import BookingCard from "../components/BookingCard";
 
 const BookingPage = () => {
   const { selectedRooms, handleRoomSelection, setSelectedRooms } =
@@ -368,7 +369,7 @@ const BookingPage = () => {
       setSelectedRooms([]);
     }
   };
-  const getStars = (count) => "★".repeat(count) + "☆".repeat(5 - count);
+  // const getStars = (count) => "★".repeat(count) + "☆".repeat(5 - count);
 
   const hotelFullPrice = selectedRooms.map((hotel) => {
     const eachHotelPrice = hotel.selectedRooms.reduce((sum, item) => {
@@ -389,9 +390,9 @@ const BookingPage = () => {
 
   return (
     <main className="bg-[#FCFCFC] text-[#111111] border-t">
-      <div className="max-w-[1280px] px-10 pt-10 pb-20 flex gap-8 items-start">
+      <div className="max-w-[1280px] px-10 pt-10 pb-20 flex flex-col items-center lg:flex-row gap-8 items-start">
         {/* left */}
-        <section className="flex-1 border border-black/20 rounded-lg">
+        {/* <section className="flex-1 border border-black/20 rounded-lg">
           {selectedRooms?.map((hotel) => (
             <div
               key={hotel.id}
@@ -488,10 +489,23 @@ const BookingPage = () => {
               </div>
             </div>
           ))}
-        </section>
-
+        </section> */}
+        <BookingCard
+          selectedRooms={selectedRooms}
+          getRoomData={(item) => ({
+            name: item.roomDetail?.roomName || item.rates?.[0]?.name || "Room",
+            board: item.rates?.[0]?.boardName,
+            price: Math.round(item.rates?.[0]?.retailRate?.total?.[0]?.amount),
+          })}
+          onCancel={handleRoomSelection}
+          getHotelData={(hotel) => ({
+            hotelId: hotel.id,
+            hotelName: hotel.name,
+            photo: hotel.main_photo,
+          })}
+        />
         {/* right - summary */}
-        <aside className="w-80 sticky top-8 rounded-2xl border border-[#E7E7E7] bg-[#FAFAFA] p-6">
+        <aside className="w-80 lg:sticky lg:top-8 rounded-2xl border border-[#E7E7E7] bg-[#FAFAFA] p-6">
           <span className="text-[11px] uppercase tracking-[0.12em] text-[#9CA3AF]">
             Price summary
           </span>

@@ -154,7 +154,7 @@ const HotelDetailsPage = () => {
       </div>
 
       {/* CONTENT */}
-      <div style={s.contentWrapper}>
+      <div style={s.contentWrapper} className="content-wrapper">
         {/* LEFT */}
         <div style={s.leftCol}>
           {/* Header */}
@@ -279,7 +279,10 @@ const HotelDetailsPage = () => {
                   (i) => i.id === hotelData.id,
                 );
                 const isSelected = existingHotel?.selectedRooms?.find(
-                  (r) => r.roomTypeId === room.roomTypeId,
+                  (r) =>
+                    r.roomTypeId === room.roomTypeId &&
+                    dateRange[0].toISOString().split("T")[0] === r.check_in &&
+                    dateRange[1].toISOString().split("T")[0] === r.check_out,
                 );
 
                 return (
@@ -312,8 +315,8 @@ const HotelDetailsPage = () => {
                           handleRoomSelection(
                             room,
                             hotelData,
-                            dateRange[0].toISOString().split('T')[0],
-                            dateRange[1].toISOString().split('T')[0],
+                            dateRange[0].toISOString().split("T")[0],
+                            dateRange[1].toISOString().split("T")[0],
                           )
                         }
                         className="book-btn"
@@ -346,7 +349,7 @@ const HotelDetailsPage = () => {
 
         {/* RIGHT — STICKY CARD */}
         <div style={s.rightCol}>
-          <div style={s.stickyCard} className="fade-up-1">
+          <div style={s.stickyCard} className="fade-up-1 sticky-card">
             <div style={s.stickyTop}>
               <span style={s.stickyFrom}>from</span>
               <span style={s.stickyPrice}>
@@ -505,6 +508,16 @@ const css = `
 .slick-dots li.slick-active button:before { color: #c9a96e !important; opacity: 1 !important; }
 .slick-dots { bottom: -30px; }
 .slick-dots li { margin: 0 2px; }
+@media (max-width: 768px) {
+  .content-wrapper {
+    display: flex !important;
+    flex-direction: column-reverse !important;
+  }
+  .sticky-card {
+    position: relative !important;
+    top: 0 !important;
+  }
+}
 `;
 
 const s = {

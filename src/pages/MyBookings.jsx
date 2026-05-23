@@ -84,6 +84,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { supabase } from "../supabase";
 import { AuthContext } from "../context/AuthContext";
+import BookingCard from "../components/BookingCard";
 
 export const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -102,6 +103,60 @@ export const MyBookings = () => {
     };
     fetchBookings();
   }, []);
-  console.log(bookings);
-  return <div></div>;
+  const groupHotels = bookings.reduce((sum, item) => {
+    const {
+      id,
+      price,
+      room_name,
+      room_board,
+      check_in,
+      check_out,
+      hotel_image,
+      hotel_id,
+      city,
+      country,
+      hotel_name,
+    } = item;
+
+    const roomData = {
+      id,
+      price,
+      room_name,
+      room_board,
+      check_in,
+      check_out,
+    };
+    const hotelData = { hotel_id, hotel_image, city, country, hotel_name };
+    if (sum[item.hotel_id]) {
+      sum[item.hotel_id].selectedRooms.push(roomData);
+    } else {
+      sum[item.hotel_id] = { ...hotelData, selectedRooms: [roomData] };
+    }
+    return sum;
+  }, {});
+  const deleteBooking = async (item, hotel, bookingId) => {
+    const { error } = await supabase
+      .from("bookings")
+      .delete()
+      .eq("id", bookingId);
+    console.log(bookingId);
+    setBookings((prev) => prev.filter((b) => b.id !== bookingId));
+  };
+  console.log(groupHotels);
+  return (
+    <BookingCard
+      selectedRooms={Object.values(groupHotels)}
+      getHotelData={(hotel) => ({
+        hotelName: hotel.hotel_name,
+        hotelId: hotel.hotel_id,
+        photo: hotel.hotel_image,
+      })}
+      getRoomData={(item) => ({
+        name: item.room_name,
+        board: item.room_board,
+        fullPrice: item.price,
+      })}
+      onCancel={deleteBooking}
+    />
+  );
 };

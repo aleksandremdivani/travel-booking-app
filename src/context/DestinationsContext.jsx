@@ -276,8 +276,13 @@ const DestinationsProvider = ({ children }) => {
   //   });
   // };
   const [hotelRates, setHotelRates] = useState(null);
-  const [selectedRooms, setSelectedRooms] = useState([]);
-
+  const [selectedRooms, setSelectedRooms] = useState(() => {
+    const saved = sessionStorage.getItem("selectedRooms");
+    return saved ? JSON.parse(saved) : [];
+  });
+  useEffect(() => {
+    sessionStorage.setItem("selectedRooms", JSON.stringify(selectedRooms));
+  }, [selectedRooms]);
   // const handleRoomSelection = (room, currentHotel) => {
   //   setSelectedRooms((prev) => {
   //     const isAlreadySelected = prev.find(
@@ -292,10 +297,11 @@ const DestinationsProvider = ({ children }) => {
   const navigate = useNavigate();
   const handleRoomSelection = (room, currentHotel, checkIn, checkOut) => {
     setSelectedRooms((prev) => {
-      if(!user) navigate("/signup")
+      if (!user) navigate("/signup");
       const existingHotel = prev.find((i) => i.id === currentHotel.id);
       const isAlreadySelected = existingHotel?.selectedRooms?.find(
-        (r) => r.roomTypeId === room.roomTypeId,
+        (r) =>
+          r.roomTypeId === room.roomTypeId 
       );
       if (existingHotel && !isAlreadySelected) {
         return prev.map((h) => {
@@ -313,6 +319,7 @@ const DestinationsProvider = ({ children }) => {
           return h;
         });
       }
+      
       if (existingHotel && isAlreadySelected) {
         return prev
           .map((h) => {
