@@ -53,9 +53,13 @@ function App() {
           <Route element={<HotelsPage />} path="/hotels" />
           <Route element={<ActivitiesPage />} path="/tours&activities" />
           <Route element={<WeatherPage />} path="/weather" />
-          {user && <Route element={<BookingPage />} path="/booking" />}
+          {user && (
+            <>
+              <Route element={<BookingPage />} path="/booking" />{" "}
+              <Route element={<ProfilePage />} path="/profile" />{" "}
+            </>
+          )}
           <Route element={<MyBookings />} path="/bookings" />
-          <Route element={<ProfilePage />} path="/profile" />
         </Route>
         {!user && (
           <>

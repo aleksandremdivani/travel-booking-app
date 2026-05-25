@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { LogOut, Pencil, PenIcon, Save } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const InputComp = ({ label, value, forInp, isEditing, inputRef, setValue }) => {
   return (
@@ -37,6 +38,7 @@ const ProfilePage = () => {
   const [newFirstName, setNewFirstName] = useState("");
   const [newLastName, setNewLastName] = useState("");
   const [newFullName, setNewFullName] = useState("");
+  const navigate = useNavigate();
   useEffect(() => {
     if (user?.user_metadata?.name) {
       setNewFullName(user?.user_metadata?.full_name);
@@ -163,7 +165,10 @@ const ProfilePage = () => {
             </div>
           </div>
           <button
-            onClick={signOut}
+            onClick={() => {
+              signOut();
+              navigate("/");
+            }}
             className="text-red-500 flex bg-[#0A0F23] w-full p-4 hover:bg-[#050810] gap-2 max-w-[888px] rounded-xl bg"
           >
             <LogOut /> Log out

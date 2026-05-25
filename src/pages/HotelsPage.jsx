@@ -275,7 +275,6 @@ export const HotelsPage = () => {
               src="/assets/location-pin.svg"
               className="absolute top-1/2 -translate-y-1/2 w-9 left-[3px]"
             />
-            {/* 🔍</span> */}
             <input
               value={query}
               onChange={(e) => {

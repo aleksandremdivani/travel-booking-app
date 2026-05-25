@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../App.css";
 import { NavItem } from "./NavItem";
 import { useContext, useEffect, useState } from "react";
@@ -10,6 +10,7 @@ const Header = () => {
   const { user, setUser, signOut } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   // useEffect(() => {
   //   const handleClickOutside = (e) => {
   //     if (!e.target.closest(".user-dropdown")) {
@@ -25,7 +26,7 @@ const Header = () => {
     location.pathname === "/tours&activities";
   const userName =
     user?.user_metadata?.firstName + " " + user?.user_metadata?.lastName;
-    console.log("meta:", user?.user_metadata);
+  console.log("meta:", user?.user_metadata);
   // if (user) {
   //   const userName =
   //     user.user_metadata.firstName + " " + user.user_metadata.lastName;
@@ -105,7 +106,9 @@ const Header = () => {
             {user && (
               <div className="flex items-center gap-3 relative user-dropdown">
                 <p className={`capitalize ${isTransparent && "text-white"}`}>
-                  {user.user_metadata.full_name? user.user_metadata.full_name: userName}
+                  {user.user_metadata.full_name
+                    ? user.user_metadata.full_name
+                    : userName}
                 </p>
                 <Link to="/profile">
                   <img
@@ -118,14 +121,6 @@ const Header = () => {
                     referrerPolicy="no-referrer"
                   />
                 </Link>
-                {open && (
-                  <button
-                    className="bg-gray-100 hover:bg-gray-200 rounded-sm px-2 text-sm absolute -bottom-4 -right-14"
-                    onClick={signOut}
-                  >
-                    Log out
-                  </button>
-                )}
               </div>
             )}
           </div>
@@ -200,8 +195,10 @@ const Header = () => {
                 <div className="flex items-center gap-3 relative user-dropdown">
                   <img
                     className="w-10 rounded-full border-2 border-gray-300"
-                    onMouseEnter={() => setOpen(true)}
-                    onClick={() => setOpen((prev) => !prev)}
+                    onClick={() => {
+                      navigate("/profile");
+                      setIsOpen(false);
+                    }}
                     src={
                       user.user_metadata.avatar_url || "/assets/user-icon2.svg"
                     }
@@ -209,7 +206,9 @@ const Header = () => {
                     referrerPolicy="no-referrer"
                   />
                   <p className="capitalize">
-                    {userName || user.user_metadata.name}
+                    {user.user_metadata.full_name
+                      ? user.user_metadata.full_name
+                      : userName}{" "}
                   </p>
 
                   {/* {open && (

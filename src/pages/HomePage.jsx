@@ -1,5 +1,5 @@
 import "../App.css";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import React, { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const navigate = useNavigate();
+
   const {
     destinations,
     setDestinationCity,
@@ -21,7 +22,26 @@ const HomePage = () => {
     setQuery,
     isOpen,
     setIsOpen,
+    setSelectedPlace,
+    selectedPlace,
+    query,
+    places,
+    dates,
+    setDates,
+    setDateRange,
   } = useContext(DestinationsContext);
+  const selectedPlaceRef = useRef();
+
+  const handleSearch = () => {
+    if (!selectedPlaceRef.current) return;
+    setDateRange(dates);
+    setSelectedPlace(selectedPlaceRef.current);
+    selectedPlaceRef.current = null;
+    setDates([null, null]);
+    setQuery("");
+    setIsLoading(true);
+    navigate("/hotels");
+  };
   useEffect(() => {
     AOS.init({
       duration: 1000, // global duration in milliseconds
@@ -40,29 +60,58 @@ const HomePage = () => {
               Find and book amazing travel deals easily
             </p>
           </div>
-          <form className="flex-col py-5 px-3 sm:flex-row gap-3 rounded-xl border w-full max-w-90/100 min-h-20 flex bg-orange-400 flex items-center">
-            <input
-              type="search"
-              ref={destinationSearchRef}
-              placeholder="Choose destination"
-              className="dest-search w-7/10 sm:w-4/10 h-12 px-11 border border-gray-300 rounded-xl shadow-sm
-        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-        hover:border-gray-400 transition text-gray-700 bg-white"
-            />
-            <div className="sm:w-4/10 w-7/10">
-              <DateRangePicker />
+
+          <div className="w-9/10 bg-orange-500 rounded-xl py-4 px-4 flex justify-center">
+            <div className="flex gap-3 w-full max-w-4xl flex-col md:flex-row items-center">
+              <div className="relative w-full md:flex-2">
+                <img
+                  src="/assets/location-pin.svg"
+                  className="absolute top-1/2 -translate-y-1/2 w-9 left-[3px]"
+                />
+                <input
+                  value={query}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    setIsOpen(true);
+                  }}
+                  type="search"
+                  placeholder="Choose destination"
+                  className="w-full h-11 pl-9 pr-4 border border-gray-300 rounded-xl text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition"
+                />
+                {isOpen && places.length > 0 && (
+                  <div className="absolute z-10 bg-white border border-gray-200 rounded-xl shadow-lg w-full mt-1 max-h-60 overflow-y-auto">
+                    {places?.map((place) => (
+                      <div
+                        key={place.placeId}
+                        onClick={() => {
+                          selectedPlaceRef.current = place;
+                          setQuery(place.displayName);
+                          setIsOpen(false);
+                        }}
+                        className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0"
+                      >
+                        <p className="text-sm font-medium text-gray-800">
+                          {place.displayName}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {place.formattedAddress}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="w-full md:flex-2">
+                <DateRangePicker />
+              </div>
+              <button
+                onClick={handleSearch}
+                className="w-full md:w-auto px-8 h-11 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors duration-200 font-medium text-sm"
+              >
+                Search
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                handleHotelSearch();
-                navigate("/booking");
-              }}
-              className="sm:px-7 w-40 h-12 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300 font-semibold"
-            >
-              Search
-            </button>
-          </form>
+          </div>
         </div>
       </main>
       <section
